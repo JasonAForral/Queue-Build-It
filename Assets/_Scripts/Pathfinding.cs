@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 
 public class Pathfinding : MonoBehaviour
 {
 
     public Transform seeker, target;
-    
+
     Grid grid;
 
     void Awake ()
@@ -17,51 +18,40 @@ public class Pathfinding : MonoBehaviour
 
     void Update ()
     {
-        
-        FindPath(seeker.position, target.position);
+        if (Input.GetButton("Jump"))
+            FindPath(seeker.position, target.position);
     }
 
     void FindPath (Vector3 startPosition, Vector3 targetPosition)
     {
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
         Node startNode = grid.NodeFromWorldPoint(startPosition);
         Node targetNode = grid.NodeFromWorldPoint(targetPosition);
-        
-        List<Node> openSet = new List<Node>();
+
+        Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
         HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode);
 
-     
+
         while (openSet.Count > 0)
         {
-            Node currentNode = openSet[0];
-            for (int i = 1; i < openSet.Count; i++)
-            {
-                if (openSet[i].fCost < currentNode.fCost || openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost)
-                {
-                    //Debug.Log(i +" -_- " + openSet.Count + " _-_ " + currentNode.gridPosition);
-                    //Debug.Break();
-                    currentNode = openSet[i];
-                }
-            }
-            
-            openSet.Remove(currentNode);
+            Node currentNode = openSet.RemoveFirst();
             closedSet.Add(currentNode);
 
             if (currentNode == targetNode)
             {
-             
+
                 RetracePath(startNode, targetNode);
-                openSet.Clear();
-                closedSet.Clear();
+                sw.Stop();
+                print("Path Found: " + sw.ElapsedMilliseconds + " ms");
                 return;
             }
-        
-                
+
+
             foreach (Node neighbor in grid.GetNeighbors(currentNode))
             {
-                //Debug.Log(currentNode.gridPosition + " to " + neighbor.gridPosition);
-                //Debug.Break();
-        
+
                 if (!neighbor.walkable || closedSet.Contains(neighbor)) continue;
 
                 int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
@@ -74,7 +64,13 @@ public class Pathfinding : MonoBehaviour
                     //Debug.Log(currentNode.gridPosition);
 
                     if (!openSet.Contains(neighbor))
+                    {
                         openSet.Add(neighbor);
+                    }
+                    else
+                    {
+                        openSet.UpdateItem(neighbor);
+                    }
                 }
 
             }
@@ -108,17 +104,14 @@ public class Pathfinding : MonoBehaviour
             0,
             Mathf.Abs(nodeA.gridPosition.z - nodeB.gridPosition.z));
 
-        
+
         //Point3 distance = (nodeA.gridPosition - nodeB.gridPosition).abs;
         if (distance.x > distance.z)
         {
-            return 14 * distance.z + 10 * (distance.x - distance.z);
+            return 1414 * distance.z + 1000 * (distance.x - distance.z);
         }
 
-        return 14 * distance.x + 10 * (distance.z - distance.x);
-
-        
-
+        return 1414 * distance.x + 1000 * (distance.z - distance.x);
     }
 }
    

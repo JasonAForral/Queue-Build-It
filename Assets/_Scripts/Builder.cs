@@ -2,67 +2,50 @@
 using System.Collections;
 
 public class Builder : MonoBehaviour {
-    private NavMeshAgent navi;
-    public Transform[] target;
-
-    public NavMeshPathStatus status = NavMeshPathStatus.PathPartial;
-    public bool pathPending;
-
-    public Vector3 debugTarget;
+    public Transform[] waypoints;
 
     public short index = 0;
 
-    public bool ToggleNav;
-
 	// Use this for initialization
-	void Start () {
-        navi = GetComponent<NavMeshAgent>();
-        
-        navi.destination = target[index].position;
+    void Start ()
+    {
     }
 	
 	// Update is called once per frame
     void Update ()
     {
-        //test_sqrMag = (transform.position - target.position).sqrMagnitude;
-        //if ((transform.position - target.position).sqrMagnitude > 4f)
-        //else
-        //    navi.Stop();
-        status = navi.pathStatus;
-        pathPending = navi.pathPending;
-        debugTarget = navi.destination;
-
-        if (navi.stoppingDistance * 0.5 >= navi.remainingDistance)
+        // waypoints
+        if (0 < waypoints.Length)
         {
-            if (index < target.Length)
+            if (index < waypoints.Length)
             {
 
                 switch (index)
                 {
                     case 0:
                         {
-                            target[index].parent = transform;
-                            target[index].localRotation = Quaternion.identity;
-                            target[index].localPosition = new Vector3(0f, 1.1f, 0f);
+                            waypoints[index].parent = transform;
+                            waypoints[index].localRotation = Quaternion.identity;
+                            waypoints[index].localPosition = new Vector3(0f, 1.1f, 0f);
                             index++;
-                            navi.destination = target[index].position;
+                            //navi.destination = waypoints[index].position;
                             break;
                         }
                     case 1:
                         {
-                            target[index - 1].parent = null;
-                            target[index - 1].rotation = target[index].rotation;
-                            target[index - 1].position = target[index].position;
-                            target[index].gameObject.SetActive(false);
+                            waypoints[index - 1].parent = null;
+                            waypoints[index - 1].rotation = waypoints[index].rotation;
+                            waypoints[index - 1].position = waypoints[index].position;
+                            waypoints[index].gameObject.SetActive(false);
                             index++;
-                            navi.destination = target[index].position;
+                            //navi.destination = waypoints[index].position;
                             //navi.Stop();
                             break;
                         }
                     default:
                         {
                             index++;
-                            navi.destination = target[index].position;
+                            //navi.destination = waypoints[index].position;
                             //navi.Stop();
                             break;
                         }

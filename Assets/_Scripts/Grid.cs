@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Grid : MonoBehaviour {
 
+    public bool onlyDisplayPathGizmos;
     public LayerMask unwalkableMask;
     public Vector3 gridWordSize; // 3d space grid
     public Vector3 gridWordSizeInverse; // 3d space grid
@@ -27,6 +28,14 @@ public class Grid : MonoBehaviour {
 
         CreateGrid();
 
+    }
+
+    public int MaxSize
+    {
+        get
+        {
+            return gridSize.x * gridSize.z;
+        }
     }
 
     private void CreateGrid ()
@@ -90,20 +99,35 @@ public class Grid : MonoBehaviour {
     void OnDrawGizmos ()
     {
         Gizmos.DrawWireCube(transform.position, gridWordSize);
-        if (grid != null)
+
+        if (onlyDisplayPathGizmos)
         {
-            foreach (Node n in grid)
+            if (path != null)
             {
-                Gizmos.color = (n.walkable ? Color.white : Color.red);
-                if (path != null)
+                foreach (Node n in path)
                 {
-                    if (path.Contains(n))
-                    {
-                        Gizmos.color = Color.black;
-                        
-                    }
+                    Gizmos.color = Color.black;
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.05f));
                 }
-                Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.05f));
+            }
+        }
+        else
+        {
+            if (grid != null)
+            {
+                foreach (Node n in grid)
+                {
+                    Gizmos.color = (n.walkable ? Color.white : Color.red);
+                    if (path != null)
+                    {
+                        if (path.Contains(n))
+                        {
+                            Gizmos.color = Color.black;
+
+                        }
+                    }
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.05f));
+                }
             }
         }
     }
