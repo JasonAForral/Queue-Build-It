@@ -2,28 +2,28 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Grid : MonoBehaviour {
+public class Grid : MonoBehaviour
+{
 
-    public bool onlyDisplayPathGizmos;
+    public bool displayGridGizmos;
     public LayerMask unwalkableMask;
     public Vector3 gridWordSize; // 3d space grid
-    public Vector3 gridWordSizeInverse; // 3d space grid
+    public Vector3 gridWordSizeInverse; // fraction
     public float nodeRadius;
-    private float nodeDiameter;
-    private float nodeDiameterInverse;
 
     private Node[,] grid;
 
+    private float nodeDiameter;
+    private float nodeDiameterInverse;
     private Point3 gridSize;
 
-    void Start ()
+    void Awake ()
     {
         nodeDiameter = nodeRadius * 2;
         nodeDiameterInverse = 1f / nodeDiameter;
         gridSize.x = Mathf.RoundToInt(gridWordSize.x * nodeDiameterInverse);
         gridSize.z = Mathf.RoundToInt(gridWordSize.z * nodeDiameterInverse);
 
-        
         gridWordSizeInverse = new Vector3(1f / gridWordSize.x, 1f, 1f / gridWordSize.z);
 
         CreateGrid();
@@ -50,7 +50,7 @@ public class Grid : MonoBehaviour {
             {
                 Vector3 worldPoint = worldBottomLeft + new Vector3(x * nodeDiameter + nodeRadius, 0f, z * nodeDiameter + nodeRadius);
                 bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
-                grid[x,z] = new Node(walkable, worldPoint, new Point3(x, 0, z));
+                grid[x, z] = new Node(walkable, worldPoint, new Point3(x, 0, z));
             }
         }
     }
@@ -65,10 +65,10 @@ public class Grid : MonoBehaviour {
         {
             for (int z = -1; z <= 1; z++)
             {
-                
+
                 if (0 == x && 0 == z) continue;
                 Point3 check = node.gridPosition + new Point3(x, 0, z);
-                
+
                 if (check.x >= 0 && check.x < gridSize.x && check.z >= 0 && check.z < gridSize.z)
                 {
                     //Debug.Log(check.z);
@@ -88,47 +88,24 @@ public class Grid : MonoBehaviour {
         int x = Mathf.RoundToInt((gridSize.x - 1) * percent.x);
         int z = Mathf.RoundToInt((gridSize.z - 1) * percent.z);
 
-        
+
         return grid[x, z];
     }
 
-    public List<Node> path;
 
-    public
-    
+
     void OnDrawGizmos ()
     {
         Gizmos.DrawWireCube(transform.position, gridWordSize);
-
-        if (onlyDisplayPathGizmos)
+        if (displayGridGizmos && grid != null)
         {
-            if (path != null)
+            foreach (Node n in grid)
             {
-                foreach (Node n in path)
-                {
-                    Gizmos.color = Color.black;
-                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.05f));
-                }
-            }
-        }
-        else
-        {
-            if (grid != null)
-            {
-                foreach (Node n in grid)
-                {
-                    Gizmos.color = (n.walkable ? Color.white : Color.red);
-                    if (path != null)
-                    {
-                        if (path.Contains(n))
-                        {
-                            Gizmos.color = Color.black;
-
-                        }
-                    }
-                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.05f));
-                }
+                Gizmos.color = (n.walkable ? Color.white : Color.red);
+                Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.05f));
             }
         }
     }
+
 }
+

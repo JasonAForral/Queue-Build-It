@@ -6,78 +6,92 @@ using System.Diagnostics;
 
 public class Pathfinding : MonoBehaviour
 {
-
-    public Transform seeker, target;
-
+    PathRequestManager requestManager;
     Grid grid;
 
     void Awake ()
     {
+        requestManager = GetComponent<PathRequestManager>();
         grid = GetComponent<Grid>();
     }
 
-    void Update ()
+    public void StartFindPath (Vector3 startPos, Vector3 targetPos)
     {
-        if (Input.GetButton("Jump"))
-            FindPath(seeker.position, target.position);
+        StartCoroutine(FindPath(startPos, targetPos));
     }
 
-    void FindPath (Vector3 startPosition, Vector3 targetPosition)
+
+    IEnumerator FindPath (Vector3 startPosition, Vector3 targetPosition)
     {
         Stopwatch sw = new Stopwatch();
         sw.Start();
+
+        Vector3[] waypoints = new Vector3[0];
+
+        bool pathSuccess = false;
+
         Node startNode = grid.NodeFromWorldPoint(startPosition);
         Node targetNode = grid.NodeFromWorldPoint(targetPosition);
 
-        Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
-        HashSet<Node> closedSet = new HashSet<Node>();
-        openSet.Add(startNode);
-
-
-        while (openSet.Count > 0)
+        if (startNode.walkable && targetNode.walkable)
         {
-            Node currentNode = openSet.RemoveFirst();
-            closedSet.Add(currentNode);
+            Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
+            HashSet<Node> closedSet = new HashSet<Node>();
+            openSet.Add(startNode);
 
-            if (currentNode == targetNode)
+
+            while (openSet.Count > 0)
             {
+                Node currentNode = openSet.RemoveFirst();
+                closedSet.Add(currentNode);
 
-                RetracePath(startNode, targetNode);
-                sw.Stop();
-                print("Path Found: " + sw.ElapsedMilliseconds + " ms");
-                return;
-            }
-
-
-            foreach (Node neighbor in grid.GetNeighbors(currentNode))
-            {
-
-                if (!neighbor.walkable || closedSet.Contains(neighbor)) continue;
-
-                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
-
-                if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+                if (currentNode == targetNode)
                 {
-                    neighbor.gCost = newMovementCostToNeighbor;
-                    neighbor.hCost = GetDistance(neighbor, targetNode);
-                    neighbor.parent = currentNode;
-                    //Debug.Log(currentNode.gridPosition);
 
-                    if (!openSet.Contains(neighbor))
-                    {
-                        openSet.Add(neighbor);
-                    }
-                    else
-                    {
-                        openSet.UpdateItem(neighbor);
-                    }
+                    sw.Stop();
+                    print("Path Found: " + sw.ElapsedMilliseconds + " ms");
+                    pathSuccess = true;
+                    RetracePath(startNode, targetNode);
+                    break;
                 }
 
+
+                foreach (Node neighbor in grid.GetNeighbors(currentNode))
+                {
+
+                    if (!neighbor.walkable || closedSet.Contains(neighbor)) continue;
+
+                    int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+
+                    if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+                    {
+                        neighbor.gCost = newMovementCostToNeighbor;
+                        neighbor.hCost = GetDistance(neighbor, targetNode);
+                        neighbor.parent = currentNode;
+                        //Debug.Log(currentNode.gridPosition);
+
+                        if (!openSet.Contains(neighbor))
+                        {
+                            openSet.Add(neighbor);
+                        }
+                        else
+                        {
+                            openSet.UpdateItem(neighbor);
+                        }
+                    }
+
+                }
             }
         }
+        yield return null;
+        if (pathSuccess)
+        {
+            waypoints = RetracePath(startNode, targetNode);
+        }
+        requestManager.FinishedProcessingPath(waypoints, pathSuccess);
     }
 
-    void RetracePath (Node beginNode, Node endNode)
+    Vector3[] RetracePath (Node beginNode, Node endNode)
     {
         List<Node> path = new List<Node>();
 
@@ -88,30 +102,47 @@ public class Pathfinding : MonoBehaviour
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }
+        Vector3[] waypoints = SimplifyPath(path);
+        System.Array.Reverse(waypoints);
+        return waypoints;
 
-        path.Reverse();
+    }
 
-        grid.path = path;
+    Vector3[] SimplifyPath (List<Node> path)
+    {
+        List<Vector3> waypoints = new List<Vector3>();
+        Vector3 directionOld = Vector3.zero;
 
+        for (int i = 0; i < path.Count - 1; i++)
+        {
+            Vector3 directionNew = path[i + 1].worldPosition - path[i].worldPosition;
+            if (directionNew != directionOld)
+            {
+                waypoints.Add(path[i].worldPosition);
+            }
+            directionOld = directionNew;
+        }
+        //waypoints.Reverse();
+        return waypoints.ToArray();
     }
 
     int GetDistance (Node nodeA, Node nodeB)
     {
-        //Debug.Log(nodeA.gridPosition + " to " + nodeB.gridPosition);
-        //Debug.Break();
-        Point3 distance = new Point3(
-            Mathf.Abs(nodeA.gridPosition.x - nodeB.gridPosition.x),
-            0,
-            Mathf.Abs(nodeA.gridPosition.z - nodeB.gridPosition.z));
+        //Point3 distance = new Point3(
+        //    Mathf.Abs(nodeA.gridPosition.x - nodeB.gridPosition.x),
+        //    0,
+        //    Mathf.Abs(nodeA.gridPosition.z - nodeB.gridPosition.z));
 
 
-        //Point3 distance = (nodeA.gridPosition - nodeB.gridPosition).abs;
+        Point3 distance = (nodeA.gridPosition - nodeB.gridPosition).abs;
         if (distance.x > distance.z)
         {
-            return 1414 * distance.z + 1000 * (distance.x - distance.z);
+            return 14 * distance.z + 10 * (distance.x - distance.z);
         }
 
-        return 1414 * distance.x + 1000 * (distance.z - distance.x);
+        return 14 * distance.x + 10 * (distance.z - distance.x);
+
+        //return distance.sqrMagnitude;
     }
 }
    
