@@ -6,17 +6,19 @@ public class Node : IHeapItem<Node> {
     public bool walkable;
     public Vector3 worldPosition;
     public Point3 gridPosition;
+    public int movementPenalty;
 
     public int gCost;
     public int hCost;
     public Node parent;
     int heapIndex;
 
-    public Node (bool walkable, Vector3 worldPosition, Point3 gridPosition)
+    public Node (bool walkable, Vector3 worldPosition, Point3 gridPosition, int penalty)
     {
         this.walkable = walkable;
         this.worldPosition = worldPosition;
         this.gridPosition = gridPosition;
+        this.movementPenalty = penalty;
     }
 
     public int fCost

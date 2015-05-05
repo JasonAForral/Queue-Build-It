@@ -41,7 +41,7 @@ public class Unit : MonoBehaviour
                 }
                 currentWaypoint = path[targetIndex];
             }
-            transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, (speed) * Time.deltaTime);
             yield return null;
         }
     }
@@ -51,7 +51,7 @@ public class Unit : MonoBehaviour
         {
             for (int i = targetIndex; i < path.Length; i++)
             {
-                Gizmos.color = Color.black;
+                Gizmos.color = Color.magenta;
                 Gizmos.DrawCube(path[i], Vector3.one);
                 if (i == targetIndex)
                 {
