@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Builder : Unit {
+public class Builder : PathingUnit {
     public Transform[] jobWaypoints;
 
-    public short index = 0;
+    public short JobIndex = 0;
 
 	// Use this for initialization
     //override void Start ()
@@ -13,13 +13,13 @@ public class Builder : Unit {
         
     //}
 
-    public override void Start ()
+    protected override void Start ()
     {
         base.Start();
     }
 	
 	// Update is called once per frame
-    public override void Update ()
+    protected override void Update ()
     {
         base.Update();
 
@@ -28,35 +28,35 @@ public class Builder : Unit {
         //// builder has jobWaypoints
         if (0 < jobWaypoints.Length)
         {
-        //    if (index < jobWaypoints.Length)
+        //    if (JobIndex < jobWaypoints.Length)
         //    {
 
-        //        switch (index)
+        //        switch (JobIndex)
         //        {
         //            case 0:
         //                {
-        //                    jobWaypoints[index].parent = transform;
-        //                    jobWaypoints[index].localRotation = Quaternion.identity;
-        //                    jobWaypoints[index].localPosition = new Vector3(0f, 1.1f, 0f);
-        //                    index++;
-        //                    //navi.destination = jobWaypoints[index].position;
+        //                    jobWaypoints[JobIndex].parent = transform;
+        //                    jobWaypoints[JobIndex].localRotation = Quaternion.identity;
+        //                    jobWaypoints[JobIndex].localPosition = new Vector3(0f, 1.1f, 0f);
+        //                    JobIndex++;
+        //                    //navi.destination = jobWaypoints[JobIndex].position;
         //                    break;
         //                }
         //            case 1:
         //                {
-        //                    jobWaypoints[index - 1].parent = null;
-        //                    jobWaypoints[index - 1].rotation = jobWaypoints[index].rotation;
-        //                    jobWaypoints[index - 1].position = jobWaypoints[index].position;
-        //                    jobWaypoints[index].gameObject.SetActive(false);
-        //                    index++;
-        //                    //navi.destination = jobWaypoints[index].position;
+        //                    jobWaypoints[JobIndex - 1].parent = null;
+        //                    jobWaypoints[JobIndex - 1].rotation = jobWaypoints[JobIndex].rotation;
+        //                    jobWaypoints[JobIndex - 1].position = jobWaypoints[JobIndex].position;
+        //                    jobWaypoints[JobIndex].gameObject.SetActive(false);
+        //                    JobIndex++;
+        //                    //navi.destination = jobWaypoints[JobIndex].position;
         //                    //navi.Stop();
         //                    break;
         //                }
         //            default:
         //                {
-        //                    index++;
-        //                    //navi.destination = jobWaypoints[index].position;
+        //                    JobIndex++;
+        //                    //navi.destination = jobWaypoints[JobIndex].position;
         //                    //navi.Stop();
         //                    break;
         //                }

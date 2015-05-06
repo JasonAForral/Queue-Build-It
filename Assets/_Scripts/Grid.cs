@@ -59,7 +59,7 @@ public class Grid : MonoBehaviour
             for (int z = 0; z < gridSize.z; z++)
             {
                 Vector3 worldPoint = worldBottomLeft + new Vector3(x * nodeDiameter + nodeRadius, 0f, z * nodeDiameter + nodeRadius);
-                bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
+                bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius*.95f, unwalkableMask));
                 int movementPentaly = 0;
 
                 if (walkable)
@@ -80,7 +80,6 @@ public class Grid : MonoBehaviour
 
     public List<Node> GetNeighbors (Node node)
     {
-        //Debug.Break();
         List<Node> neighbors = new List<Node>();
 
         for (int x = -1; x <= 1; x++)

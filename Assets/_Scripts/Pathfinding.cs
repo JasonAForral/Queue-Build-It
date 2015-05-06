@@ -115,7 +115,7 @@ public class Pathfinding : MonoBehaviour
 
         for (int i = 0; i < path.Count - 1; i++)
         {
-            Vector3 directionNew = path[i + 1].worldPosition - path[i].worldPosition;
+            Vector3 directionNew = (path[i + 1].gridPosition - path[i].gridPosition).toVector3;
             if (directionNew != directionOld)
             {
                 waypoints.Add(path[i].worldPosition);

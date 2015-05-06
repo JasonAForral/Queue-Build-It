@@ -4,9 +4,9 @@ using System.Collections;
 
 public class MouseOverSelection : MonoBehaviour {
 
-    public Unit selectedUnit;
+    public SelectableUnit selectedUnit;
     public Text selectionText;
-    public Transform selectionCube;
+    public GameObject selectionCube;
 
     //public float cooldown = 1f;
     //public float timer = 0f;
@@ -27,7 +27,6 @@ public class MouseOverSelection : MonoBehaviour {
     {
         if (Input.GetButton("Fire1"))
         {
-            Debug.Log("click");
             Click();
         }
     }
@@ -36,19 +35,33 @@ public class MouseOverSelection : MonoBehaviour {
     {
         mousePosition = Input.mousePosition;
 
-        Debug.Log("Casting Ray");
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionMask))
         {
-            Collider collided = hit.collider;
-            selectedUnit = collided.GetComponent<Unit>();
-            selectionCube.position = collided.transform.position;
+            Transform collided = hit.collider.transform;
+            selectedUnit = collided.GetComponent<SelectableUnit>();
+            selectionCube.transform.SetParent(collided, false);
+            selectionCube.SetActive(true);
+            PathingUnit child = selectedUnit.GetComponent<PathingUnit>();
+            if (null != child)
+            {
+                selectedUnit.canMove = true;
+                selectedUnit = child;
+
+            }
+            else
+            {
+                selectedUnit.canMove = true;
+            }
         }
         else
         {
             selectedUnit = null;
+            selectionCube.SetActive(false);
+            selectionCube.transform.SetParent(null, false);
+            selectionCube.transform.parent = null;
         }
         UpdateSelectionUI();
     }

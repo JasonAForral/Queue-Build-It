@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Unit : MonoBehaviour
+public class PathingUnit : SelectableUnit
 {
 
     public Transform target;
@@ -9,15 +9,19 @@ public class Unit : MonoBehaviour
     Vector3[] path;
     public int pathWaypointIndex;
     public bool isPathing;
+    public int debugPathLength;
 
     // Use this for initialization
-    public virtual void Start ()
+    protected override void Start ()
     {
-        
+        base.Start();
     }
 
-    public virtual void Update ()
+    protected override void Update ()
     {
+
+        base.Update();
+
         if (!isPathing && target != null)
         {
             StartNewPath();
@@ -40,7 +44,9 @@ public class Unit : MonoBehaviour
     {
         if (pathSuccessful)
         {
+            //pathWaypointIndex = 0;
             path = newPath;
+            debugPathLength = path.Length;
             StopCoroutine("FollowPath");
             StartCoroutine("FollowPath");
         }

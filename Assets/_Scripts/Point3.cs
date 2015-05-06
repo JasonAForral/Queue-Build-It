@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-//using System;
 using System.Collections;
-//using Random = UnityEngine.Random; 
 
 [System.Serializable]
 public struct Point3
@@ -88,6 +86,19 @@ public struct Point3
         }
     }
 
+    public static Vector3 ToVector3 (Point3 a)
+    {
+        return new Vector3(a.x, a.y, a.z);
+    }
+
+    public Vector3 toVector3
+    {
+        get
+        {
+            return ToVector3(this);
+        }
+    }
+
     // Point3 + Point3
 
     public static Point3 operator + (Point3 a, Point3 b)
@@ -160,4 +171,10 @@ public struct Point3
     {
         return "(" + x + ", " + y + ", " + z + ")";
     }
+}
+
+
+public static class ExtendedMethods
+{
+    
 }
