@@ -24,8 +24,8 @@ public class BuilderNavMesh : MonoBehaviour {
 	// Update is called once per frame
     void Update ()
     {
-        //test_sqrMag = (transform.position - waypoints.position).sqrMagnitude;
-        //if ((transform.position - waypoints.position).sqrMagnitude > 4f)
+        //test_sqrMag = (transform.position - jobWaypoints.position).sqrMagnitude;
+        //if ((transform.position - jobWaypoints.position).sqrMagnitude > 4f)
         //else
         //    navi.Stop();
         status = navi.pathStatus;

@@ -7,12 +7,33 @@ public class Unit : MonoBehaviour
     public Transform target;
     public float speed = 10f;
     Vector3[] path;
-    int targetIndex;
+    public int pathWaypointIndex;
+    public bool isPathing;
 
     // Use this for initialization
-    void Start ()
+    public virtual void Start ()
     {
+        
+    }
+
+    public virtual void Update ()
+    {
+        if (!isPathing && target != null)
+        {
+            StartNewPath();
+        }
+        else 
+        {
+
+        }
+        
+    }
+
+    void StartNewPath ()
+    {
+        Debug.Log("go");
         PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
+        isPathing = true;
     }
 
     public void OnPathFound (Vector3[] newPath, bool pathSuccessful)
@@ -27,19 +48,21 @@ public class Unit : MonoBehaviour
 
     IEnumerator FollowPath ()
     {
-        targetIndex = 0;
+        pathWaypointIndex = 0;
         Vector3 currentWaypoint = path[0];
 
         while (true)
         {
             if (transform.position == currentWaypoint)
             {
-                targetIndex++;
-                if (targetIndex >= path.Length)
+                pathWaypointIndex++;
+                if (pathWaypointIndex >= path.Length)
                 {
+                    target = null;
+                    isPathing = false;
                     yield break;
                 }
-                currentWaypoint = path[targetIndex];
+                currentWaypoint = path[pathWaypointIndex];
             }
             transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, (speed) * Time.deltaTime);
             yield return null;
@@ -49,11 +72,11 @@ public class Unit : MonoBehaviour
     {
         if (null != path)
         {
-            for (int i = targetIndex; i < path.Length; i++)
+            for (int i = pathWaypointIndex; i < path.Length; i++)
             {
                 Gizmos.color = Color.magenta;
                 Gizmos.DrawCube(path[i], Vector3.one);
-                if (i == targetIndex)
+                if (i == pathWaypointIndex)
                 {
                     Gizmos.DrawLine(transform.position, path[i]);
                 }

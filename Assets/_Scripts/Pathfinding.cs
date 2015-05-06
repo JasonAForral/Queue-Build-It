@@ -122,7 +122,7 @@ public class Pathfinding : MonoBehaviour
             }
             directionOld = directionNew;
         }
-        //waypoints.Reverse();
+        //jobWaypoints.Reverse();
         return waypoints.ToArray();
     }
 
