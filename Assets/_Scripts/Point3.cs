@@ -13,29 +13,29 @@ public struct Point3
         {
             switch (index)
             {
-                case 0:
-                    return x;
-                case 1:
-                    return y;
-                case 2:
-                    return z;
-                default:
-                    return 0;
+            case 0:
+                return x;
+            case 1:
+                return y;
+            case 2:
+                return z;
+            default:
+                return 0;
             }
         }
         set
         {
             switch (index)
             {
-                case 0:
-                    x = value;
-                    break;
-                case 1:
-                    y = value;
-                    break;
-                case 2:
-                    z = value;
-                    break;
+            case 0:
+                x = value;
+                break;
+            case 1:
+                y = value;
+                break;
+            case 2:
+                z = value;
+                break;
             }
         }
     }
@@ -46,6 +46,7 @@ public struct Point3
         this.x = x;
         this.y = y;
         this.z = z;
+        
     }
 
     public static Point3 zero = new Point3(0, 0, 0);

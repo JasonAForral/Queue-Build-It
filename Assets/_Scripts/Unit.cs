@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PathingUnit : SelectableUnit
+public class Unit : MonoBehaviour, ISelectable, IDamageable<float>
 {
 
     public Transform target;
@@ -12,15 +12,13 @@ public class PathingUnit : SelectableUnit
     public int debugPathLength;
 
     // Use this for initialization
-    protected override void Start ()
+    protected virtual void Start ()
     {
-        base.Start();
     }
 
-    protected override void Update ()
+    protected virtual void Update ()
     {
 
-        base.Update();
 
         if (!isPathing && target != null)
         {
@@ -93,4 +91,17 @@ public class PathingUnit : SelectableUnit
             }
         }
     }
+
+    public void Select ()
+    {
+    }
+
+    public void DisplayUI ()
+    {
+    }
+
+    public void Damage (float damageTaken)
+    {
+    }
+    
 }

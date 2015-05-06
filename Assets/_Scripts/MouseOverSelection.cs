@@ -4,7 +4,7 @@ using System.Collections;
 
 public class MouseOverSelection : MonoBehaviour {
 
-    public SelectableUnit selectedUnit;
+    public GameObject selectedUnit;
     public Text selectionText;
     public GameObject selectionCube;
 
@@ -41,20 +41,20 @@ public class MouseOverSelection : MonoBehaviour {
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionMask))
         {
             Transform collided = hit.collider.transform;
-            selectedUnit = collided.GetComponent<SelectableUnit>();
+            selectedUnit = collided.gameObject;
             selectionCube.transform.SetParent(collided, false);
             selectionCube.SetActive(true);
-            PathingUnit child = selectedUnit.GetComponent<PathingUnit>();
-            if (null != child)
-            {
-                selectedUnit.canMove = true;
-                selectedUnit = child;
+            //Unit child = selectedUnit.GetComponent<Unit>();
+            //if (null != child)
+            //{
+            //    selectedUnit.canMove = true;
+            //    selectedUnit = child;
 
-            }
-            else
-            {
-                selectedUnit.canMove = true;
-            }
+            //}
+            //else
+            //{
+            //    selectedUnit.canMove = true;
+            //}
         }
         else
         {

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Builder : PathingUnit {
+public class Builder : Unit {
     public Transform[] jobWaypoints;
 
     public short JobIndex = 0;
