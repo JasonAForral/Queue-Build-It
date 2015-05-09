@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Unit : MonoBehaviour, ISelectable, IDamageable<float>
 {
@@ -10,12 +11,19 @@ public class Unit : MonoBehaviour, ISelectable, IDamageable<float>
     public int pathWaypointIndex;
     public bool isPathing;
     public int debugPathLength;
-
+    
+    private GameObject guiPanel;
+    private Text guiTextDisplay;
+    
     // Use this for initialization
-    protected virtual void Start ()
+    protected virtual void Awake ()
     {
+        guiPanel = GameObject.FindGameObjectWithTag("GUIUnit");
+        guiTextDisplay = guiPanel.GetComponentInChildren<Text>();
     }
 
+    protected virtual void Start ()
+    { }
     protected virtual void Update ()
     {
 
@@ -98,6 +106,8 @@ public class Unit : MonoBehaviour, ISelectable, IDamageable<float>
 
     public void DisplayUI ()
     {
+        guiTextDisplay.text = "Unit: " + name;
+        guiPanel.SetActive(true);
     }
 
     public void Damage (float damageTaken)

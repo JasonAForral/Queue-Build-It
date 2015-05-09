@@ -2,7 +2,7 @@
 using System.Collections;
 
 [System.Serializable]
-public struct Point3
+public struct Point3 
 {
 
     public int x, y, z;
@@ -179,3 +179,4 @@ public static class ExtendedMethods
 {
     
 }
+

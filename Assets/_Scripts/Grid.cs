@@ -8,9 +8,9 @@ public class Grid : MonoBehaviour
     public bool displayGridGizmos;
     public LayerMask unwalkableMask;
     public Vector3 gridWordSize; // 3d space grid
-    public Vector3 gridWordSizeInverse; // fraction
+    private Vector3 gridWordSizeInverse; // fraction
     public float nodeRadius;
-
+    
     public TerrainType[] walkableRegions;
     LayerMask walkableMask;
     Dictionary<int, int> walkableRegionsDictioanry = new Dictionary<int, int>();

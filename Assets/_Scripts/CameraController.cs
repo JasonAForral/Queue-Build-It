@@ -6,12 +6,12 @@ public class CameraController : MonoBehaviour {
     private Transform cameraTilt;
     private Transform cameraZoom;
 
-    [SerializeField]
-    private float rotateSpeed = 1f;
+    //[SerializeField]
+    //private float rotateSpeed = 1f;
     [SerializeField]
     private float mouseSlideSpeed = 1f;
-    [SerializeField]
-    private float keyboardSlideSpeed = 1f;
+    //[SerializeField]
+    //private float keyboardSlideSpeed = 1f;
     [SerializeField]
     private float zoomSpeed = 5f;
     [SerializeField]
@@ -45,8 +45,5 @@ public class CameraController : MonoBehaviour {
 
         if (Mathf.Abs(zoomTarget - zoomCurent) > 0.05f)
             cameraZoom.localPosition = Vector3.forward * Mathf.Lerp(zoomCurent, zoomTarget, zoomSpeed * Time.deltaTime);
-
-
-        Debug.Log(Input.GetAxis("Mouse ScrollWheel"));
     }
 }
