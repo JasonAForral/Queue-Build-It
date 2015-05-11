@@ -18,7 +18,7 @@ public class Unit : MonoBehaviour, ISelectable, IDamageable<float>
     // Use this for initialization
     protected virtual void Awake ()
     {
-        guiPanel = GameObject.FindGameObjectWithTag("GUIUnit");
+        guiPanel = GameObject.FindGameObjectWithTag(Tags.GUIUnit);
         guiTextDisplay = guiPanel.GetComponentInChildren<Text>();
     }
 

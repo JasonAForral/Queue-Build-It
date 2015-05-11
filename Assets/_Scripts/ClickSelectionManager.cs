@@ -38,8 +38,9 @@ public class ClickSelectionManager : MonoBehaviour {
     }
     void Update ()
     {
-        if (Input.GetButton("Fire1"))
+        if (Input.GetButtonDown("Fire1"))
         {
+            Debug.Log(true);
             Click();
         }
     }
@@ -69,12 +70,12 @@ public class ClickSelectionManager : MonoBehaviour {
         }
         else
         {
-            selectedUnit = null;
-            selectionCube.SetActive(false);
-            selectionCube.transform.SetParent(null, false);
-            selectionCube.transform.parent = null;
+            //selectedUnit = null;
+            //selectionCube.SetActive(false);
+            //selectionCube.transform.SetParent(null, false);
+            //selectionCube.transform.parent = null;
 
-            ResetUI();
+            //ResetUI();
         }
         //UpdateSelectionUI();
     }
