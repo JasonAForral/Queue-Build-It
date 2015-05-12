@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 931d94acd232d434b8882dfa6794d295
-timeCreated: 1431071152
+timeCreated: 1431440842
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -10,8 +10,9 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Cube.002
+    9500000: //RootNode
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
   animations:
@@ -19,7 +20,7 @@ ModelImporter:
     bakeSimulation: 0
     optimizeGameObjects: 0
     motionNodeName: 
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
@@ -37,7 +38,7 @@ ModelImporter:
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
-    keepQuads: 0
+    keepQuads: 1
     weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001

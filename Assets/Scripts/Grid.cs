@@ -54,10 +54,10 @@ public class Grid : MonoBehaviour
 
         for (int i = 0; i < 3; i += 2)
         {
-            mNodeToWorld[i] = nodeDiameter * gridWordSize[i] / (float)gridSize[i];
+            mNodeToWorld[i] = gridWordSize[i] / (float)gridSize[i];
             bCoefficient[i] = gridWordSize[i] * 0.5f - nodeRadius;
 
-            mWorldToNode[i] = nodeDiameterInverse * gridSize[i] * gridWordSizeInverse[i];
+            mWorldToNode[i] = gridSize[i] * gridWordSizeInverse[i];
         }
     }
 
@@ -152,7 +152,7 @@ public class Grid : MonoBehaviour
             foreach (Node n in grid)
             {
                 Gizmos.color = (n.walkable ? Color.white : Color.red);
-                Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.5f));
+                Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.5f));
             }
         }
     }
@@ -180,7 +180,7 @@ public class Grid : MonoBehaviour
     {
         Vector3 worldPoint = new Vector3() ;
         worldPoint.x = x * mNodeToWorld.x - bCoefficient.x;
-        worldPoint.y = 1f;
+        worldPoint.y = transform.position.y;
         worldPoint.z = z * mNodeToWorld.z - bCoefficient.z;
         return worldPoint;
     }
