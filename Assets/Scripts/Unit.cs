@@ -26,21 +26,22 @@ public class Unit : SelectableObject
     {
 
 
-        if (!isPathing && target != null)
-        {
-            StartNewPath();
-        }
-        else 
-        {
+        //if (!isPathing && target != null)
+        //{
+        //    StartNewPath();
+        //}
+        //else 
+        //{
 
-        }
+        //}
         
     }
 
-    void StartNewPath ()
+    void StartNewPath (Vector3 targetPosition)
     {
-        Debug.Log("go");
-        PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
+        //Debug.Log("go");
+
+        PathRequestManager.RequestPath(transform.position, targetPosition, OnPathFound);
         isPathing = true;
     }
 
@@ -84,8 +85,9 @@ public class Unit : SelectableObject
         {
             for (int i = pathWaypointIndex; i < path.Length; i++)
             {
-                Gizmos.color = Color.magenta;
-                Gizmos.DrawCube(path[i], Vector3.one);
+                Gizmos.color = Color.green;
+                //Gizmos.DrawCube(path[i], Vector3.one);
+                Gizmos.DrawWireSphere(path[i], 0.5f);
                 if (i == pathWaypointIndex)
                 {
                     Gizmos.DrawLine(transform.position, path[i]);
@@ -98,9 +100,16 @@ public class Unit : SelectableObject
         }
     }
 
-    public void Move ()
+    public void MoveInput ()
     {
         Debug.Log("Where should " + name + " move?");
+    }
+
+    public void Move (Vector3 destination)
+    {
+        //Debug.Log(name + " moves to " + destination);
+        StartNewPath(destination);
+        ClickManager.instance.CancelCommand();
     }
 
     //public void Select ()

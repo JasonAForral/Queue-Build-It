@@ -23,6 +23,11 @@ public class Pathfinding : MonoBehaviour
 
     IEnumerator FindPath (Vector3 startPosition, Vector3 targetPosition)
     {
+
+        // check if nodes are the same;
+
+
+        
         //Stopwatch sw = new Stopwatch();
         //sw.Start();
 
@@ -30,10 +35,10 @@ public class Pathfinding : MonoBehaviour
 
         bool pathSuccess = false;
 
-        Node startNode = grid.NodeFromWorldPoint(startPosition);
-        Node targetNode = grid.NodeFromWorldPoint(targetPosition);
+        Node startNode = grid.WorldToNode(startPosition);
+        Node targetNode = grid.WorldToNode(targetPosition);
 
-        if (startNode.walkable && targetNode.walkable)
+        if (startNode.walkable && targetNode.walkable && (startNode != targetNode))
         {
             Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
             HashSet<Node> closedSet = new HashSet<Node>();
@@ -83,10 +88,15 @@ public class Pathfinding : MonoBehaviour
                 }
             }
         }
+        
         yield return null;
         if (pathSuccess)
         {
             waypoints = RetracePath(startNode, targetNode);
+        }
+        else
+        {
+            waypoints = RetracePath(startNode, startNode);
         }
         requestManager.FinishedProcessingPath(waypoints, pathSuccess);
     }
@@ -113,9 +123,11 @@ public class Pathfinding : MonoBehaviour
         List<Vector3> waypoints = new List<Vector3>();
         Vector3 directionOld = Vector3.zero;
 
-        for (int i = 0; i < path.Count - 1; i++)
+        for (int i = 0; i < path.Count; i++)
         {
-            Vector3 directionNew = (path[i + 1].gridPosition - path[i].gridPosition).toVector3;
+            int j = i + 1;
+            if (i >= path.Count - 1) j = i;
+            Vector3 directionNew = (path[j].gridPosition - path[i].gridPosition).toVector3;
             if (directionNew != directionOld)
             {
                 waypoints.Add(path[i].worldPosition);

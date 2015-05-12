@@ -40,7 +40,6 @@ public struct Point3
         }
     }
 
-
     public Point3 (int x, int y, int z)
     {
         this.x = x;

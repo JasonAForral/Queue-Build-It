@@ -3,31 +3,19 @@ using System.Collections;
 
 public class MoveCommand : MonoBehaviour {
 
-    //private Unit selectedUnit;
-
-	// Use this for initialization
-	void Start () {
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
     public void CommandMove ()
     {
         bool isCommanding = !ClickManager.instance.isCommanding;
         if (isCommanding)
         {
-            ClickManager.instance.isCommanding = true;
+            ClickManager.instance.currentMode = ClickMode.Move;
             Debug.Log("Command");
             //selectedUnit = ClickManager.instance.selectedUnit.GetComponent<Unit>();
-            ClickManager.instance.selectedUnit.GetComponent<Unit>().Move();
+            ClickManager.instance.selectedUnit.GetComponent<Unit>().MoveInput();
         }
         else
         {
-            ClickManager.instance.isCommanding = false;
-            Debug.Log("unCommand");
+            ClickManager.instance.CancelCommand();
         }
     }
 }

@@ -2,34 +2,46 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class ClickManager : MonoBehaviour {
+public class ClickManager : MonoBehaviour
+{
 
-    public GameObject selectionCube;
-    public Text selectionText;
-    public LayerMask selectionMask;
+    public static ClickManager instance;
     
-    //[SerializeField]
     public GameObject selectedUnit;
-
+    public ClickMode currentMode = ClickMode.Selection;
+    public bool isCommanding { get { return (ClickMode.Selection != currentMode); } }
+    
     [SerializeField]
     private GameObject guiUnit;
     [SerializeField]
     private GameObject guiStructure;
+    [SerializeField]
+    private GameObject selectionCube;
 
-    public bool isCommanding;
 
-    
+    [SerializeField]
+    private LayerMask selectionMask;
+    [SerializeField]
+    private LayerMask spaceMask;
+    [SerializeField]
+    private LayerMask structureMask;
+    [SerializeField]
+    private LayerMask unitMask;
+
     private Vector3 mousePosition;
-
     private Vector3 clickDestination;
 
-    public static ClickManager instance;
+    private Grid grid;
+
     
-    void Awake () {
+    void Awake ()
+    {
         if (null == instance)
             instance = this;
         else if (this != instance)
             Destroy(gameObject);
+
+        grid = GetComponent<Grid>();
     }
 
     void Start ()
@@ -38,45 +50,113 @@ public class ClickManager : MonoBehaviour {
     }
     void Update ()
     {
-        if (!isCommanding && Input.GetButtonDown("Fire1"))
+
+
+        if (Input.GetButtonDown("Fire1"))
         {
-            Click();
+            ClickPrimary();
         }
+
+        if (Input.GetButtonDown("Fire2"))
+        {
+            ClickSecondary();
+        }
+
+
+        if (Input.GetButtonDown("Cancel"))
+        {
+            if (isCommanding)
+            {
+                CancelCommand();
+                Debug.Log("Command Cancelled");
+            }
+            else
+            {
+                ClearSelection();
+                Debug.Log("Selection Cleared");
+            }
+
+
+        }
+
     }
 
-    void Click ()
+    void ClickPrimary ()
     {
         mousePosition = Input.mousePosition;
 
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionMask))
+        LayerMask maskInUse;
+    
+        switch (currentMode)
         {
-            Transform collided = hit.collider.transform;
-            selectedUnit = collided.gameObject;
-            selectionCube.transform.SetParent(collided, false);
-            Vector3 selection = selectionCube.transform.position;
-            selectionCube.transform.position = new Vector3(selection.x, 1f, selection.z);
-            selectionCube.SetActive(true);
-            
-            ISelectable doStuff = selectedUnit.GetComponent<ISelectable>();
-            doStuff.Select();
-            
-            ResetUI();
+       case ClickMode.Move:
+        case ClickMode.Build:
+        case ClickMode.Attackmove:
+            maskInUse = spaceMask;
+            break;
+        case ClickMode.Unbuild:
+            maskInUse = structureMask;
+            break;
+        case ClickMode.Attack:
+            maskInUse = unitMask;
+            break;
+        case ClickMode.Selection:
+        default:
+            maskInUse = selectionMask;
+            break;
+        
+        }
 
-            doStuff.DisplayUI();
+        if (Physics.Raycast(ray, out hit, 60f, maskInUse))
+        {
+            Transform other = hit.collider.transform;
+            switch (currentMode)
+            {
+            case ClickMode.Selection:
+                selectedUnit = other.gameObject;
+                selectionCube.transform.SetParent(other, false);
+
+                Vector3 selection = selectionCube.transform.position;
+                selectionCube.transform.position = new Vector3(selection.x, 1f, selection.z);
+
+                selectionCube.SetActive(true);
+
+                ISelectable target = selectedUnit.GetComponent<ISelectable>();
+                target.Select();
+
+                ResetUI();
+
+                target.DisplayUI();
+                break;
+            case ClickMode.Move:
+                MoveUnit(hit.point);
+                break;
+            }
+        }
+    }
+
+    void ClickSecondary ()
+    {
+        mousePosition = Input.mousePosition;
+
+        Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+        RaycastHit hit;
+
+        if (isCommanding)
+        {
+            CancelCommand();
         }
         else
         {
-            //selectedGameObject = null;
-            //selectionCube.SetActive(false);
-            //selectionCube.transform.SetParent(null, false);
-            //selectionCube.transform.parent = null;
-
-            //ResetUI();
+            if (null != selectedUnit && null != selectedUnit.GetComponent<Unit>())
+                if (Physics.Raycast(ray, out hit, 60f, spaceMask))
+                {
+                    MoveUnit(hit.point);
+                }
         }
-        //UpdateSelectionUI();
     }
 
     void UpdateSelectionUI ()
@@ -91,9 +171,54 @@ public class ClickManager : MonoBehaviour {
         //}
     }
 
+    public void CancelCommand ()
+    {
+        currentMode = ClickMode.Selection;
+    }
+
+    void MoveUnit (Vector3 destination)
+    {
+        Node node = grid.WorldToNode(destination);
+        
+        Vector3 worldpoint = node.worldPosition;
+        selectedUnit.GetComponent<Unit>().Move(worldpoint);
+    }
+
+    void ClearSelection ()
+    {
+        selectedUnit = null;
+        selectionCube.SetActive(false);
+        selectionCube.transform.SetParent(null, false);
+        selectionCube.transform.parent = null;
+        ResetUI();
+
+    }
+
     void ResetUI ()
     {
         guiUnit.SetActive(false);
         guiStructure.SetActive(false);
     }
+}
+
+[System.Serializable]
+public enum ClickMode
+{
+    Selection,
+    Move,
+    Build,
+    Unbuild,
+    Attackmove,
+    Attack
+    
+}
+
+[System.Serializable]
+public enum MButton
+{
+    Primary,
+    Secondary,
+    Tertiary,
+    Quaternary, 
+    Quinary
 }
