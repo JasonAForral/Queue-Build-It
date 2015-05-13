@@ -6,7 +6,7 @@ public class Structure : SelectableObject, IConstructable<float>, IDestructable<
 {
 
     // Use this for initialization
-    protected override void Awake ()
+    protected override void Start ()
     {
         guiPanel = HashIDs.GuiStructure;
         guiTextDisplay = HashIDs.StructureText;

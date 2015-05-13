@@ -16,7 +16,7 @@ public class Unit : SelectableObject
     public LineRenderer lineRenderer;
     
     // Use this for initialization
-    protected override void Awake ()
+    protected override void Start ()
     {
         guiPanel = HashIDs.GuiUnit;
         guiTextDisplay = HashIDs.UnitText;
@@ -24,11 +24,6 @@ public class Unit : SelectableObject
         lineRenderer = GetComponent<LineRenderer>();
     }
 
-    protected override void Start ()
-    {
-        
-    
-    }
     protected override void Update ()
     {
 
