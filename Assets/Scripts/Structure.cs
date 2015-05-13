@@ -8,8 +8,8 @@ public class Structure : SelectableObject, IConstructable<float>, IDestructable<
     // Use this for initialization
     protected override void Awake ()
     {
-        guiPanel = GameObject.FindGameObjectWithTag("GUIStructure");
-        guiTextDisplay = guiPanel.GetComponentInChildren<Text>();
+        guiPanel = HashIDs.GuiStructure;
+        guiTextDisplay = HashIDs.StructureText;
 
     }
 

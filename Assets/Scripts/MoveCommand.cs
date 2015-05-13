@@ -9,7 +9,7 @@ public class MoveCommand : MonoBehaviour {
         if (isCommanding)
         {
             ClickManager.instance.currentMode = ClickMode.Move;
-            Debug.Log("Command");
+            Debug.Log("Command Move");
             //selectedUnit = ClickManager.instance.selectedUnit.GetComponent<Unit>();
             ClickManager.instance.selectedUnit.GetComponent<Unit>().MoveInput();
         }
@@ -18,4 +18,6 @@ public class MoveCommand : MonoBehaviour {
             ClickManager.instance.CancelCommand();
         }
     }
+
+
 }

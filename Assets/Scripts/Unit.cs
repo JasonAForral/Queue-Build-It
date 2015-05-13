@@ -7,21 +7,28 @@ public class Unit : SelectableObject
 
     public Transform target;
     public float speed = 10f;
+    [SerializeField]
     Vector3[] path;
-    public int pathWaypointIndex;
+    public int pathWaypointIndex = 0;
     public bool isPathing;
     public int debugPathLength;
-    
+
+    public LineRenderer lineRenderer;
     
     // Use this for initialization
     protected override void Awake ()
     {
-        guiPanel = GameObject.FindGameObjectWithTag(Tags.GUIUnit);
-        guiTextDisplay = guiPanel.GetComponentInChildren<Text>();
+        guiPanel = HashIDs.GuiUnit;
+        guiTextDisplay = HashIDs.UnitText;
+
+        lineRenderer = GetComponent<LineRenderer>();
     }
 
     protected override void Start ()
-    { }
+    {
+        
+    
+    }
     protected override void Update ()
     {
 
@@ -34,7 +41,29 @@ public class Unit : SelectableObject
         //{
 
         //}
-        
+        if (null != path && isPathing)
+        {
+            lineRenderer.SetVertexCount(path.Length - pathWaypointIndex+1);
+
+            for (int i = -1; i < path.Length - pathWaypointIndex; i++)
+            {
+                if (i == -1)
+                //{
+                lineRenderer.SetPosition(0, transform.position);
+                //}
+                else
+                //{
+                lineRenderer.SetPosition(i +1, path[i+pathWaypointIndex]);
+                //}
+                //Debug.Log((i - pathWaypointIndex + 1) + ", " + path.Length);
+            }
+            //lineRenderer.SetPosition(0, transform.position);
+            //lineRenderer.SetPosition(1, path[path.Length - 1]);
+        }
+        else
+        {
+            lineRenderer.SetVertexCount(0);
+        }
     }
 
     void StartNewPath (Vector3 targetPosition)
@@ -54,6 +83,7 @@ public class Unit : SelectableObject
             debugPathLength = path.Length;
             StopCoroutine("FollowPath");
             StartCoroutine("FollowPath");
+
         }
     }
 
@@ -64,9 +94,13 @@ public class Unit : SelectableObject
 
         while (true)
         {
+
+            
             if (transform.position == currentWaypoint)
             {
+                
                 pathWaypointIndex++;
+
                 if (pathWaypointIndex >= path.Length)
                 {
                     target = null;
@@ -74,18 +108,23 @@ public class Unit : SelectableObject
                     yield break;
                 }
                 currentWaypoint = path[pathWaypointIndex];
+
             }
             transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, (speed) * Time.deltaTime);
             yield return null;
         }
     }
+
+
     public void OnDrawGizmos ()
     {
         if (null != path)
         {
+            
             for (int i = pathWaypointIndex; i < path.Length; i++)
             {
-                Gizmos.color = Color.green;
+                
+                Gizmos.color = Color.blue;
                 //Gizmos.DrawCube(path[i], Vector3.one);
                 Gizmos.DrawWireSphere(path[i], 0.5f);
                 if (i == pathWaypointIndex)

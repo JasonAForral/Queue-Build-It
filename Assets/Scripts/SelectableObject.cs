@@ -5,7 +5,7 @@ using System.Collections;
 public class SelectableObject : MonoBehaviour, ISelectable
 {
 
-    protected GameObject guiPanel;
+    public GameObject guiPanel;
     protected Text guiTextDisplay;
     
 

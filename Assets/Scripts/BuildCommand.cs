@@ -20,4 +20,19 @@ public class BuildCommand : MonoBehaviour {
             ClickManager.instance.CancelCommand();
         }
     }
+
+    public void CommandBuild ()
+    {
+        bool isCommanding = !ClickManager.instance.isCommanding;
+        if (isCommanding)
+        {
+            ClickManager.instance.currentMode = ClickMode.Build;
+            Debug.Log("Command Build");
+            ClickManager.instance.selectedUnit.GetComponent<Builder>().MoveInput();
+        }
+        else
+        {
+            ClickManager.instance.CancelCommand();
+        }
+    }
 }

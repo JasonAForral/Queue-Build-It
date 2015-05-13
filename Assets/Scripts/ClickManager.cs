@@ -192,10 +192,12 @@ public class ClickManager : MonoBehaviour
         Vector3 worldpoint = node.worldPosition;
         
         // set placeholder
+        //Object placeholder = Instantiate(P
+        TaskManager.instance.MakePlaceholder(worldpoint);
+
+        // path to resource
         selectedUnit.GetComponent<Builder>().Move(worldpoint);
         
-        // path to resource
-
         // pick up resource
 
         // bring to 
