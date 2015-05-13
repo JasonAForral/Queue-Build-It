@@ -4,26 +4,31 @@ using System.Collections.Generic;
 
 public class Grid : MonoBehaviour
 {
+    [SerializeField]
+    private bool displayGridGizmos;
+    [SerializeField]
+    private LayerMask unwalkableMask;
+    [SerializeField]
+    private Vector3 gridWordSize; // 3d space grid
+    [SerializeField]
+    private float nodeRadius;
 
-    public bool displayGridGizmos;
-    public LayerMask unwalkableMask;
-    public Vector3 gridWordSize; // 3d space grid
-    private Vector3 gridWordSizeInverse; // fraction
-    public float nodeRadius;
+    [SerializeField]
+    private TerrainType[] walkableRegions;
     
-    public TerrainType[] walkableRegions;
-    LayerMask walkableMask;
-    Dictionary<int, int> walkableRegionsDictioanry = new Dictionary<int, int>();
+    private Vector3 gridWordSizeInverse; // fraction
+
+    private LayerMask walkableMask;
+    private Dictionary<int, int> walkableRegionsDictioanry = new Dictionary<int, int>();
 
     private Node[,] grid;
 
     private float nodeDiameter;
     private float nodeDiameterInverse;
-    [SerializeField]
     private Point3 gridSize;
 
     private Vector3 mNodeToWorld;
-    private Vector3 bCoefficient;
+    private Vector3 bIntercept;
     private Vector3 mWorldToNode;
 
 
@@ -55,7 +60,7 @@ public class Grid : MonoBehaviour
         for (int i = 0; i < 3; i += 2)
         {
             mNodeToWorld[i] = gridWordSize[i] / (float)gridSize[i];
-            bCoefficient[i] = gridWordSize[i] * 0.5f - nodeRadius;
+            bIntercept[i] = gridWordSize[i] * 0.5f - nodeRadius;
 
             mWorldToNode[i] = gridSize[i] * gridWordSizeInverse[i];
         }
@@ -152,7 +157,7 @@ public class Grid : MonoBehaviour
             foreach (Node n in grid)
             {
                 Gizmos.color = (n.walkable ? Color.white : Color.red);
-                Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.5f));
+                Gizmos.DrawWireCube(n.worldPosition + Vector3.down * transform.position.y , new Vector3(nodeDiameter, 0.2f, nodeDiameter));
             }
         }
     }
@@ -170,8 +175,8 @@ public class Grid : MonoBehaviour
     public Node WorldToNode (Vector3 world)
     {
         int x, z;
-        x = Mathf.RoundToInt(Mathf.Clamp((world.x + bCoefficient.x) * mWorldToNode.x, 0, gridSize.x - 1));
-        z = Mathf.RoundToInt(Mathf.Clamp((world.z + bCoefficient.z) * mWorldToNode.z, 0, gridSize.z - 1));
+        x = Mathf.RoundToInt(Mathf.Clamp((world.x + bIntercept.x) * mWorldToNode.x, 0, gridSize.x - 1));
+        z = Mathf.RoundToInt(Mathf.Clamp((world.z + bIntercept.z) * mWorldToNode.z, 0, gridSize.z - 1));
         //Debug.Log(x + ", " + z);
         return grid[x, z];
     }
@@ -179,9 +184,9 @@ public class Grid : MonoBehaviour
     public Vector3 NodeToWorld (int x, int z)
     {
         Vector3 worldPoint = new Vector3() ;
-        worldPoint.x = x * mNodeToWorld.x - bCoefficient.x;
+        worldPoint.x = x * mNodeToWorld.x - bIntercept.x;
         worldPoint.y = transform.position.y;
-        worldPoint.z = z * mNodeToWorld.z - bCoefficient.z;
+        worldPoint.z = z * mNodeToWorld.z - bIntercept.z;
         return worldPoint;
     }
 
