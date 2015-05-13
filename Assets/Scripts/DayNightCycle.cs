@@ -9,8 +9,7 @@ public class DayNightCycle : MonoBehaviour {
     public float counter;
 
     private string remainingTime;
-    private bool dayTime;
-
+    
     public float timeSpeed = 1f;
     
 	void Start () {
@@ -20,7 +19,8 @@ public class DayNightCycle : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        transform.Rotate(-degPerSec * Time.deltaTime, 0f, 0f);
+        //transform.Rotate(-degPerSec * Time.deltaTime, 0f, 0f);
+        transform.localEulerAngles = new Vector3(180 - counter, 90f, 0f);
         counter += Time.deltaTime;
         if (counter > 360) counter -= 360f;
 
@@ -28,17 +28,18 @@ public class DayNightCycle : MonoBehaviour {
 
         if (lightAngle < 180)
         {
-            remainingTime = (180 - lightAngle) + " seconds until nightfall";
+            remainingTime = lightAngle + " in Daytime" + System.Environment.NewLine 
+                + (180 - lightAngle) + " seconds until nightfall";
             timeText.color = Color.black;
         }
         else
         {
-            remainingTime = (360 - lightAngle) + " seconds until daybreak";
+            remainingTime = lightAngle + " in Nighttime" + System.Environment.NewLine 
+                + (360 - lightAngle) + " seconds until daybreak";
             timeText.color = Color.white;
         }
 
         timeText.text = System.DateTime.Now.ToString("T") + System.Environment.NewLine
-            + lightAngle+ (dayTime ? " in Daytime" : " in Nighttime") + System.Environment.NewLine
             + remainingTime;
 
         Time.timeScale = timeSpeed;
