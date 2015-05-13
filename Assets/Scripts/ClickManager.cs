@@ -134,6 +134,9 @@ public class ClickManager : MonoBehaviour
             case ClickMode.Move:
                 MoveUnit(hit.point);
                 break;
+            case ClickMode.Build:
+                BuildUnit(hit.point);
+                break;
             }
         }
     }
@@ -179,9 +182,23 @@ public class ClickManager : MonoBehaviour
     void MoveUnit (Vector3 destination)
     {
         Node node = grid.WorldToNode(destination);
-        
         Vector3 worldpoint = node.worldPosition;
+
         selectedUnit.GetComponent<Unit>().Move(worldpoint);
+    }
+    void BuildUnit (Vector3 destination)
+    {
+        Node node = grid.WorldToNode(destination);
+        Vector3 worldpoint = node.worldPosition;
+        
+        // set placeholder
+        selectedUnit.GetComponent<Builder>().Move(worldpoint);
+        
+        // path to resource
+
+        // pick up resource
+
+        // bring to 
     }
 
     void ClearSelection ()
@@ -213,12 +230,12 @@ public enum ClickMode
     
 }
 
-[System.Serializable]
-public enum MButton
-{
-    Primary,
-    Secondary,
-    Tertiary,
-    Quaternary, 
-    Quinary
-}
+//[System.Serializable]
+//public enum MButton
+//{
+//    Primary,
+//    Secondary,
+//    Tertiary,
+//    Quaternary, 
+//    Quinary
+//}

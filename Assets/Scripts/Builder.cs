@@ -81,4 +81,9 @@ public class Builder : Unit {
         }
 
     }
+
+    public void BuildInput ()
+    {
+        Debug.Log("Where should " + name + " build?");
+    }
 }
