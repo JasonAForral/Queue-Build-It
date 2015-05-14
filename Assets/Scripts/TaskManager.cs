@@ -2,12 +2,13 @@
 using System.Collections;
 
 public class TaskManager : MonoBehaviour {
+    
     public static TaskManager instance = null;
+    public GameObject canvas;
 
     public Transform objectHolder;
-
     public GameObject placeholder;
-
+    
     public static Transform ObjectHolder
     {
         get { return ObjectHolder; }
@@ -23,6 +24,8 @@ public class TaskManager : MonoBehaviour {
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
+
+        canvas.SetActive(true);
 
         objectHolder = new GameObject("GameObjects").transform;
 

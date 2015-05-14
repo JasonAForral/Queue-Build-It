@@ -12,6 +12,7 @@ public class Unit : SelectableObject
     public int pathWaypointIndex = 0;
     public bool isPathing;
     public int debugPathLength;
+    public UnitState currentState;
 
     public LineRenderer lineRenderer;
     
@@ -105,6 +106,7 @@ public class Unit : SelectableObject
                 currentWaypoint = path[pathWaypointIndex];
 
             }
+            transform.LookAt(currentWaypoint, Vector3.up);
             transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, (speed) * Time.deltaTime);
             yield return null;
         }
@@ -134,10 +136,10 @@ public class Unit : SelectableObject
         }
     }
 
-    public void MoveInput ()
-    {
-        Debug.Log("Where should " + name + " move?");
-    }
+    //public void MoveInput ()
+    //{
+    //    Debug.Log("Where should " + name + " move?");
+    //}
 
     public void Move (Vector3 destination)
     {

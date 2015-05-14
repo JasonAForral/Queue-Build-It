@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class Structure : SelectableObject, IConstructable<float>, IDestructable<float>
+public class Structure : SelectableObject, IBuildable<float>, IDeBuildable<float>
 {
 
     // Use this for initialization
@@ -26,7 +26,14 @@ public class Structure : SelectableObject, IConstructable<float>, IDestructable<
 
     }
 
-    public void Destruct (float amountDeconstructed) { }
+    public void Build (float amountBuilt) { }
 
-    public void Construct (float amountDeconstructed) { }
+    public void DeBuild (float amountDeBuilt) { }
+}
+
+public enum StructureState
+{
+    Off,
+    Idle,
+    Attacking,
 }

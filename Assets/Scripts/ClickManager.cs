@@ -120,7 +120,7 @@ public class ClickManager : MonoBehaviour
                 selectionCube.transform.SetParent(other, false);
 
                 Vector3 selection = selectionCube.transform.position;
-                selectionCube.transform.position = new Vector3(selection.x, 1f, selection.z);
+                selectionCube.transform.position = new Vector3(selection.x, selectionCube.transform.position.y , selection.z);
 
                 selectionCube.SetActive(true);
 

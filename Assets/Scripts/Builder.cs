@@ -5,7 +5,7 @@ public class Builder : Unit {
     public Transform[] jobWaypoints;
 
     public short JobIndex = 0;
-
+    
 	protected override void Start ()
     {
         base.Start();
@@ -25,7 +25,7 @@ public class Builder : Unit {
 
     }
 
-    public void BuildInput ()
+    public void BuildPrompt ()
     {
         Debug.Log("Where should " + name + " build?");
     }
@@ -35,7 +35,7 @@ public class Builder : Unit {
         
     }
 
-    IEnumerable BuildJob ()
+    IEnumerator BuildJob ()
     {
         yield return null;
     }

@@ -12,12 +12,17 @@ public interface IDamageable<T>
     void Damage (T damageTaken);
 }
 
-public interface IDestructable<T>
+public interface IDeBuildable<T>
 {
-    void Destruct (T amountDeconstructed);
+    void DeBuild (T amountDeconstructed);
 }
 
-public interface IConstructable<T>
+public interface IBuildable<T>
 {
-    void Construct (T amountDeconstructed);
+    void Build (T amountDeconstructed);
+}
+
+public interface ICanAttack<T>
+{
+    void Attack ();
 }
