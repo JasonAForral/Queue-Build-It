@@ -156,8 +156,8 @@ public class Grid : MonoBehaviour
         {
             foreach (Node n in grid)
             {
-                Gizmos.color = (n.walkable ? Color.white : Color.red);
-                Gizmos.DrawWireCube(n.worldPosition + Vector3.down * transform.position.y , new Vector3(nodeDiameter, 0.2f, nodeDiameter));
+                Gizmos.color = (n.walkable ? Color.grey : Color.red);
+                Gizmos.DrawWireCube(n.worldPosition + Vector3.up * (transform.position.y - .1f), new Vector3(nodeDiameter, 0f, nodeDiameter));
             }
         }
     }

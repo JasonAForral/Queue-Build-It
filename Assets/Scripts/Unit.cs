@@ -28,37 +28,15 @@ public class Unit : SelectableObject
     protected override void Update ()
     {
 
-
-        //if (!isPathing && target != null)
-        //{
-        //    StartNewPath();
-        //}
-        //else 
-        //{
-
-        //}
         if (null != path && isPathing)
         {
-            lineRenderer.SetVertexCount(path.Length - pathWaypointIndex+1);
-
-            for (int i = -1; i < path.Length - pathWaypointIndex; i++)
-            {
-                if (i == -1)
-                //{
-                lineRenderer.SetPosition(0, transform.position);
-                //}
-                else
-                //{
-                lineRenderer.SetPosition(i +1, path[i+pathWaypointIndex]);
-                //}
-                //Debug.Log((i - pathWaypointIndex + 1) + ", " + path.Length);
-            }
-            //lineRenderer.SetPosition(0, transform.position);
-            //lineRenderer.SetPosition(1, path[path.Length - 1]);
+            lineRenderer.enabled = true;
+            
         }
         else
         {
             lineRenderer.SetVertexCount(0);
+            lineRenderer.enabled = false;
         }
     }
 
@@ -90,8 +68,6 @@ public class Unit : SelectableObject
 
         while (true)
         {
-
-            
             if (transform.position == currentWaypoint)
             {
                 
@@ -108,6 +84,17 @@ public class Unit : SelectableObject
             }
             transform.LookAt(currentWaypoint, Vector3.up);
             transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, (speed) * Time.deltaTime);
+
+            lineRenderer.SetVertexCount(path.Length - pathWaypointIndex + 1);
+
+            for (int i = -1; i < path.Length - pathWaypointIndex; i++)
+            {
+                if (i == -1)
+                    lineRenderer.SetPosition(0, transform.position);
+                else
+                    lineRenderer.SetPosition(i + 1, path[i + pathWaypointIndex]);
+            }
+
             yield return null;
         }
     }
