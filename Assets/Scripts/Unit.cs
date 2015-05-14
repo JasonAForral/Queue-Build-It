@@ -158,3 +158,13 @@ public class Unit : SelectableObject
 
     
 }
+
+public enum UnitState
+{
+    Idle,
+    Moving,
+    Building,
+    DeBuilding,
+    Attacking,
+    Sleeping
+}

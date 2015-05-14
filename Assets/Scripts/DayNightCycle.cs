@@ -20,7 +20,7 @@ public class DayNightCycle : MonoBehaviour {
 	void Update () {
 
         //transform.Rotate(-degPerSec * Time.deltaTime, 0f, 0f);
-        transform.localEulerAngles = new Vector3(180 - counter, 90f, 0f);
+        transform.localEulerAngles = new Vector3(counter, 90f, 0f);
         counter += Time.deltaTime;
         if (counter > 360) counter -= 360f;
 
