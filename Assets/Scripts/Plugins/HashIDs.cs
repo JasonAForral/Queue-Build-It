@@ -5,7 +5,9 @@ public class HashIDs : MonoBehaviour {
 
     // use this for animator has id
 
-	void Awake () {
+    void Awake ()
+    {
+        Debug.Log("HashIDs set");
     }
-	
+
 }
