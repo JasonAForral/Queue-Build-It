@@ -5,12 +5,22 @@ using System.Collections;
 public class Structure : SelectableObject, IBuildable<float>, IDeBuildable<float>
 {
 
-    // Use this for initialization
-    protected override void Start ()
+    public override string Status
     {
-        guiPanel = HashIDs.GuiStructure;
-        guiTextDisplay = HashIDs.StructureText;
+        get
+        {
+            if (buildProgress != 0)
+                return "Progress: " + (totalBuildCost - buildProgress).ToString("F3");
+            else
+                return base.Status;
+        }
+    }
 
+
+    // Use this for initialization
+    protected override void Awake ()
+    {
+        selectType = SelectType.Structure;
     }
 
     // Update is called once per frame
@@ -19,16 +29,24 @@ public class Structure : SelectableObject, IBuildable<float>, IDeBuildable<float
 
     }
 
-    public override void DisplayUI ()
-    {
-        guiTextDisplay.text = "Structure: " + name;
-        base.DisplayUI();
+    public float totalBuildCost = 3f;
+    public float buildProgress;
 
+    public float totalDeBuildCost = 3f;
+    public float deBuildProgress;
+
+    public void Build (float amountBuilt)
+    {
+        buildProgress += amountBuilt;
+        if (this == InputManager.instance.selectedUnit)
+            UIManager.instance.UpdateUI(this);
     }
 
-    public void Build (float amountBuilt) { }
+    public void DeBuild (float amountDeBuilt)
+    {
+        buildProgress += amountDeBuilt;
+    }
 
-    public void DeBuild (float amountDeBuilt) { }
 }
 
 public enum StructureState

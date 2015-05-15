@@ -4,7 +4,6 @@ using System.Collections;
 public interface ISelectable
 {
      void Select ();
-     void DisplayUI ();
 }
 
 public interface IDamageable<T>

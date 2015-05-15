@@ -5,9 +5,7 @@ using System.Collections;
 public class SelectableObject : MonoBehaviour, ISelectable
 {
 
-    public GameObject guiPanel;
-    protected Text guiTextDisplay;
-    
+    public SelectType selectType;
 
     // Use this for initialization
     protected virtual void Awake ()
@@ -30,9 +28,20 @@ public class SelectableObject : MonoBehaviour, ISelectable
     {
     }
 
-    public virtual void DisplayUI ()
+    public virtual string Status
     {
-        guiPanel.SetActive(true);
+        get
+        {
+            return System.String.Empty;
+        }
     }
-
 }
+
+public enum SelectType
+{
+    NameOnly,
+    Structure,
+    Unit,
+    Placeholder
+}
+

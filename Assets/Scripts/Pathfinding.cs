@@ -115,7 +115,6 @@ public class Pathfinding : MonoBehaviour
         Vector3[] waypoints = SimplifyPath(path);
         System.Array.Reverse(waypoints);
         return waypoints;
-
     }
 
     Vector3[] SimplifyPath (List<Node> path)
@@ -134,18 +133,11 @@ public class Pathfinding : MonoBehaviour
             }
             directionOld = directionNew;
         }
-        //jobWaypoints.Reverse();
         return waypoints.ToArray();
     }
 
     int GetDistance (Node nodeA, Node nodeB)
     {
-        //Point3 distance = new Point3(
-        //    Mathf.Abs(nodeA.gridPosition.x - nodeB.gridPosition.x),
-        //    0,
-        //    Mathf.Abs(nodeA.gridPosition.z - nodeB.gridPosition.z));
-
-
         Point3 distance = (nodeA.gridPosition - nodeB.gridPosition).abs;
         if (distance.x > distance.z)
         {
@@ -154,7 +146,6 @@ public class Pathfinding : MonoBehaviour
 
         return 14 * distance.x + 10 * (distance.z - distance.x);
 
-        //return distance.sqrMagnitude;
     }
 }
    

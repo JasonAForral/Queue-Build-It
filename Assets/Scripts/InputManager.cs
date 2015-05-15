@@ -2,24 +2,29 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class ClickManager : MonoBehaviour
+public class InputManager : MonoBehaviour
 {
 
-    public static ClickManager instance;
+    public static InputManager instance;
     
-    public GameObject selectedUnit;
+    private SelectableObject _selectedUnit;
+
+    public SelectableObject selectedUnit
+    {
+        get { return _selectedUnit;}
+        set { _selectedUnit = value;
+
+        UIManager.instance.UpdateUI(_selectedUnit);
+        }
+    }
+    
     public ClickMode currentMode = ClickMode.Selection;
     public bool isCommanding { get { return (ClickMode.Selection != currentMode); } }
-    
-    [SerializeField]
-    private GameObject guiUnit;
-    [SerializeField]
-    private GameObject guiStructure;
+
     [SerializeField]
     private GameObject selectionCube;
 
-
-    [SerializeField]
+[SerializeField]
     private LayerMask selectionMask;
     [SerializeField]
     private LayerMask spaceMask;
@@ -33,7 +38,7 @@ public class ClickManager : MonoBehaviour
 
     private Grid grid;
 
-    
+
     void Awake ()
     {
         if (null == instance)
@@ -44,10 +49,6 @@ public class ClickManager : MonoBehaviour
         grid = GetComponent<Grid>();
     }
 
-    void Start ()
-    {
-        ResetUI();
-    }
     void Update ()
     {
 
@@ -116,22 +117,22 @@ public class ClickManager : MonoBehaviour
             switch (currentMode)
             {
             case ClickMode.Selection:
-                selectedUnit = other.gameObject;
-                selectionCube.transform.SetParent(other, false);
+                //selectedUnit = other.GetComponent<SelectableObject>();
+                //selectionCube.transform.SetParent(other, false);
 
-                Vector3 selection = selectionCube.transform.position;
-                selectionCube.transform.position = new Vector3(selection.x, selectionCube.transform.position.y , selection.z);
+                //Vector3 selection = selectionCube.transform.position;
+                //selectionCube.transform.position = new Vector3(selection.x, selectionCube.transform.position.y , selection.z);
 
-                selectionCube.SetActive(true);
+                //selectionCube.SetActive(true);
 
-                ISelectable target = selectedUnit.GetComponent<ISelectable>();
-                target.Select();
+                //selectedUnit.Select();
 
-                ResetUI();
-
-                target.DisplayUI();
+                //// display Panel UI
+                //UIManager.instance.DisplayUI(selectedUnit);
+                UpdateSelection(other);
                 break;
             case ClickMode.Move:
+
                 MoveUnit(hit.point);
                 break;
             case ClickMode.Build:
@@ -162,20 +163,28 @@ public class ClickManager : MonoBehaviour
         }
     }
 
-    void UpdateSelectionUI ()
+    public void UpdateSelection (Transform other)
     {
-        //if (null != selectedGameObject)
-        //{
-        //    selectionText.text = "Selected: " + selectedGameObject.name;
-        //}
-        //else
-        //{
-        //    selectionText.text = "Selected: Nothing";
-        //}
+        selectedUnit = other.GetComponent<SelectableObject>();
+        selectionCube.transform.SetParent(other, false);
+
+        Vector3 selection = selectionCube.transform.position;
+        selectionCube.transform.position = new Vector3(selection.x, selectionCube.transform.position.y, selection.z);
+
+        selectionCube.SetActive(true);
+
+        //selectedUnit.Select();
+
+        // display Panel UI
+        UIManager.instance.DisplayUI(selectedUnit);
     }
 
     public void CancelCommand ()
     {
+        StopCoroutine("FollowPath");
+        StopCoroutine("DrawPath");
+        StopCoroutine("BuildJob");
+        
         currentMode = ClickMode.Selection;
     }
 
@@ -192,17 +201,11 @@ public class ClickManager : MonoBehaviour
         Vector3 worldpoint = node.worldPosition;
         
         // set placeholder
-        //Object placeholder = Instantiate(P
-        TaskManager.instance.MakePlaceholder(worldpoint);
+        GameObject placeholder;
+        TaskManager.instance.MakePlaceholder(worldpoint, out placeholder);
 
-        // path to resource
-        selectedUnit.GetComponent<Builder>().Move(worldpoint);
-        
-        // pick up resource
-
-        // bring to 
-
-
+        // start coroutine
+        selectedUnit.GetComponent<Builder>().Build(placeholder);
     }
 
     void ClearSelection ()
@@ -211,15 +214,10 @@ public class ClickManager : MonoBehaviour
         selectionCube.SetActive(false);
         selectionCube.transform.SetParent(null, false);
         selectionCube.transform.parent = null;
-        ResetUI();
+        UIManager.instance.ResetUI();
 
     }
 
-    void ResetUI ()
-    {
-        guiUnit.SetActive(false);
-        guiStructure.SetActive(false);
-    }
 }
 
 [System.Serializable]

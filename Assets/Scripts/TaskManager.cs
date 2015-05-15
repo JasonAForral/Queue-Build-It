@@ -8,6 +8,7 @@ public class TaskManager : MonoBehaviour {
 
     public Transform objectHolder;
     public GameObject placeholder;
+    public GameObject wall;
     
     public static Transform ObjectHolder
     {
@@ -25,17 +26,27 @@ public class TaskManager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject);
 
-        canvas.SetActive(true);
-
-        objectHolder = new GameObject("GameObjects").transform;
+        objectHolder = new GameObject("ObjectHolder").transform;
 
         
 	}
 
-    public void MakePlaceholder (Vector3 location)
+    public void MakePlaceholder (Vector3 location, out GameObject instance)
     {
-        GameObject instance = Instantiate(placeholder, location, Quaternion.identity) as GameObject;
+        instance = Instantiate(placeholder, location, Quaternion.identity) as GameObject;
         instance.transform.parent = objectHolder;
+    }
+
+    public void MakeWall (GameObject target)
+    {
+        GameObject instance = Instantiate(wall, target.transform.position, Quaternion.identity) as GameObject;
+        if (target == InputManager.instance.selectedUnit.gameObject)
+        {
+            //InputManager.instance.selectedUnit = instance.GetComponent<Structure>();
+            InputManager.instance.UpdateSelection(instance.transform);
+        }
+        instance.transform.parent = objectHolder;
+        Destroy(target);
     }
 
 }

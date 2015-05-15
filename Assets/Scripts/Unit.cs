@@ -17,33 +17,19 @@ public class Unit : SelectableObject
     public LineRenderer lineRenderer;
     
     // Use this for initialization
-    protected override void Start ()
+    protected override void Awake ()
     {
-        guiPanel = HashIDs.GuiUnit;
-        guiTextDisplay = HashIDs.UnitText;
-
         lineRenderer = GetComponent<LineRenderer>();
+        selectType = SelectType.Unit;
     }
 
     protected override void Update ()
     {
 
-        if (null != path && isPathing)
-        {
-            lineRenderer.enabled = true;
-            
-        }
-        else
-        {
-            lineRenderer.SetVertexCount(0);
-            lineRenderer.enabled = false;
-        }
     }
 
-    void StartNewPath (Vector3 targetPosition)
+    protected void StartNewPath (Vector3 targetPosition)
     {
-        //Debug.Log("go");
-
         PathRequestManager.RequestPath(transform.position, targetPosition, OnPathFound);
         isPathing = true;
     }
@@ -55,9 +41,38 @@ public class Unit : SelectableObject
             //pathWaypointIndex = 0;
             path = newPath;
             debugPathLength = path.Length;
-            StopCoroutine("FollowPath");
-            StartCoroutine("FollowPath");
+            if (debugPathLength > 0)
+            {
+                currentState = UnitState.Moving;
+                UIManager.instance.UpdateUI(this);
+                StopCoroutine("BuildOrder");
 
+                StopCoroutine("FollowPath");
+                StopCoroutine("DrawPath");
+
+                StartCoroutine("FollowPath");
+                StartCoroutine("DrawPath");
+            }
+        }
+    }
+
+    IEnumerator DrawPath ()
+    {
+        lineRenderer.enabled = true;
+        while (UnitState.Moving == currentState)
+        {
+
+            lineRenderer.SetVertexCount(path.Length - pathWaypointIndex + 1);
+
+            for (int i = -1; i < path.Length - pathWaypointIndex; i++)
+            {
+                if (i == -1)
+                    lineRenderer.SetPosition(0, transform.position + Vector3.up * 0.2f);
+                else
+                    lineRenderer.SetPosition(i + 1, path[i + pathWaypointIndex] + Vector3.up * 0.2f);
+            }
+
+            yield return null;
         }
     }
 
@@ -65,6 +80,7 @@ public class Unit : SelectableObject
     {
         pathWaypointIndex = 0;
         Vector3 currentWaypoint = path[0];
+
 
         while (true)
         {
@@ -75,8 +91,8 @@ public class Unit : SelectableObject
 
                 if (pathWaypointIndex >= path.Length)
                 {
-                    target = null;
-                    isPathing = false;
+                    // path complete
+                    EndPath();
                     yield break;
                 }
                 currentWaypoint = path[pathWaypointIndex];
@@ -85,29 +101,26 @@ public class Unit : SelectableObject
             transform.LookAt(currentWaypoint, Vector3.up);
             transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, (speed) * Time.deltaTime);
 
-            lineRenderer.SetVertexCount(path.Length - pathWaypointIndex + 1);
-
-            for (int i = -1; i < path.Length - pathWaypointIndex; i++)
-            {
-                if (i == -1)
-                    lineRenderer.SetPosition(0, transform.position);
-                else
-                    lineRenderer.SetPosition(i + 1, path[i + pathWaypointIndex]);
-            }
-
             yield return null;
         }
     }
 
+    protected void EndPath ()
+    {
+        target = null;
+        isPathing = false;
+        lineRenderer.enabled = false;
+        if (UnitState.Moving == currentState)
+            currentState = UnitState.Idle;
+        UIManager.instance.UpdateUI(this);
+    }
 
     public void OnDrawGizmos ()
     {
         if (null != path)
         {
-            
             for (int i = pathWaypointIndex; i < path.Length; i++)
             {
-                
                 Gizmos.color = Color.blue;
                 //Gizmos.DrawCube(path[i], Vector3.one);
                 Gizmos.DrawWireSphere(path[i], 0.5f);
@@ -123,28 +136,20 @@ public class Unit : SelectableObject
         }
     }
 
-    //public void MoveInput ()
-    //{
-    //    Debug.Log("Where should " + name + " move?");
-    //}
-
     public void Move (Vector3 destination)
     {
         //Debug.Log(name + " moves to " + destination);
         StartNewPath(destination);
-        ClickManager.instance.CancelCommand();
+        InputManager.instance.CancelCommand();
     }
 
-    //public void Select ()
-    //{
-    //}
-
-    public override void DisplayUI ()
+    public override string Status
     {
-        guiTextDisplay.text = "Unit: " + name;
-        base.DisplayUI();
+        get
+        {
+            return currentState.ToString();
+        }
     }
-
     
 }
 
