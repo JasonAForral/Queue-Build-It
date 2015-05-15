@@ -71,7 +71,6 @@ public class Builder : Unit
         StopCoroutine("DrawPath");
         currentState = UnitState.Building;
         EndPath();
-        
         // do build task
         //UIManager.instance.UpdateUI(this);
                     
