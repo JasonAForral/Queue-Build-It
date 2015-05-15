@@ -38,12 +38,14 @@ public class Grid : MonoBehaviour
 
         foreach (TerrainType region in walkableRegions)
         {
-            walkableMask.value = walkableMask |= region.terrainMask.value;
-            walkableRegionsDictioanry.Add((int)Mathf.Log(region.terrainMask.value, 2f), region.terrainPenalty);
+            walkableMask.value = walkableMask |= region.mask.value;
+            walkableRegionsDictioanry.Add((int)Mathf.Log(region.mask.value, 2f), region.penalty);
         }
 
 
         CreateGrid();
+
+        Debug.Log("Grid ready");
 
     }
 
@@ -129,25 +131,11 @@ public class Grid : MonoBehaviour
         return neighbors;
     }
 
-    //public Node WorldPointToNode (Vector3 worldPosition)
-    //{
-    //    Vector3 percent;
-    //    percent.x = Mathf.Clamp01((worldPosition.x + gridWordSize.x * 0.5f - nodeRadius) * gridWordSizeInverse.x);
-    //    percent.z = Mathf.Clamp01((worldPosition.z + gridWordSize.z * 0.5f - nodeRadius) * gridWordSizeInverse.z);
-
-    //    int x = Mathf.RoundToInt(gridSize.x * percent.x);
-    //    int z = Mathf.RoundToInt(gridSize.z * percent.z);
-
-
-    //    return grid[x, z];
-    //}
-
-    public Vector3 NodeCoordToWorldPoint (int x, int z)
+    public void ChangeWalkableNode (Vector3 position)
     {
-        return new Vector3();
+        Node nodeToChange = WorldToNode(position);
+        nodeToChange.walkable = !nodeToChange.walkable;
     }
-
-
 
     void OnDrawGizmos ()
     {
@@ -165,12 +153,9 @@ public class Grid : MonoBehaviour
     [System.Serializable]
     public class TerrainType
     {
-        public LayerMask terrainMask;
-        public int terrainPenalty;
+        public LayerMask mask;
+        public int penalty;
     }
-
-    
-
 
     public Node WorldToNode (Vector3 world)
     {

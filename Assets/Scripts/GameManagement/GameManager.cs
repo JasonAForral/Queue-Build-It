@@ -4,12 +4,16 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager gameManager;
+    
     public static InputManager inputManager;
-    public static Pathfinding pathfinding;
-    public static PathRequestManager pathRequestManager;
+    public static TaskManager taskManager;
     public static UIManager uiManager;
-    public static UnitCommand unitCommand;
-
+    
+    //public static Grid grid;
+    //public static Pathfinding pathfinding;
+    //public static PathRequestManager pathRequestManager;
+    //public static UnitCommand unitCommand;
+    
     void Awake ()
     {
         if (null == gameManager)
@@ -20,12 +24,21 @@ public class GameManager : MonoBehaviour
         }
 
         inputManager = GetComponent<InputManager>();
-        pathfinding = GetComponent<Pathfinding>();
-        pathRequestManager = GetComponent<PathRequestManager>();
+        taskManager = GetComponent<TaskManager>();
         uiManager = GetComponent<UIManager>();
-        unitCommand = GetComponent<UnitCommand>();
-
+        
+        //grid = GetComponent<Grid>();
+        //pathfinding = GetComponent<Pathfinding>();
+        //pathRequestManager = GetComponent<PathRequestManager>();
+        //unitCommand = GetComponent<UnitCommand>();
+        
 
         Debug.Log("GameManager ready");
+    }
+
+    public static void IfSelectedUpdateUI (SelectableObject that)
+    {
+        if (that == inputManager.selectedUnit)
+            uiManager.UpdateUI(that);
     }
 }

@@ -51,7 +51,7 @@ public class Builder : Unit
     {
         StopCoroutine("BuildJob");
         StartCoroutine("BuildJob", target);
-        InputManager.instance.CancelCommand();
+        GameManager.inputManager.CancelCommand();
     }
 
     IEnumerator BuildJob (GameObject target)
@@ -62,6 +62,7 @@ public class Builder : Unit
         StopCoroutine("DrawPath");
         
         StartNewPath(targetPosition);
+        yield return null;
         while ((transform.position - targetPosition).sqrMagnitude > 1f)
         {
             yield return null;
@@ -78,7 +79,7 @@ public class Builder : Unit
         while (targetStructure.buildProgress < targetStructure.totalBuildCost)
         {
             progress = targetStructure.totalBuildCost-targetStructure.buildProgress;
-            UIManager.instance.UpdateUI(this);
+            GameManager.uiManager.UpdateUI(this);
             if (UnitState.Building != currentState)
             {
                 Debug.Log(currentState.ToString());
@@ -88,14 +89,13 @@ public class Builder : Unit
             yield return null;
         }
 
-        TaskManager.instance.MakeWall(target);
+        GameManager.taskManager.MakeWall(target);
         Debug.Log("Job's Done");
         currentState = UnitState.Idle;
-        UIManager.instance.UpdateUI(this);
+        GameManager.uiManager.UpdateUI(this);
                     
 
     }
-
 
     //IEnumerator AssembleStructure (Structure target)
     //{

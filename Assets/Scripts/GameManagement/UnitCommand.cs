@@ -2,46 +2,51 @@
 using System.Collections;
 
 public class UnitCommand : MonoBehaviour {
-
     
+    InputManager inputManager;
+
+    void Awake ()
+    {
+        inputManager = GetComponent<InputManager>();
+    }
 
     public void Move ()
     {
-        bool isCommanding = !InputManager.instance.isCommanding;
+        bool isCommanding = !inputManager.isCommanding;
         // TODO may need to change this or highlight active command
 
         if (isCommanding)
         {
-            InputManager.instance.currentMode = ClickMode.Move;
+            inputManager.currentMode = ClickMode.Move;
             Debug.Log("Prompt Move");
 
             //ClickManager.instance.selectedUnit.GetComponent<Builder>().BuildPrompt();
         }
         else
         {
-            InputManager.instance.CancelCommand();
+            inputManager.CancelCommand();
         }
     }
 
     public void Build ()
     {
-        bool isCommanding = !InputManager.instance.isCommanding;
+        bool isCommanding = !inputManager.isCommanding;
         if (isCommanding)
         {
-            InputManager.instance.currentMode = ClickMode.Build;
+            inputManager.currentMode = ClickMode.Build;
         }
         else
         {
-            InputManager.instance.CancelCommand();
+            inputManager.CancelCommand();
         }
     }
 
     public void DeBuild ()
     {
-        bool isCommanding = !InputManager.instance.isCommanding;
+        bool isCommanding = !inputManager.isCommanding;
         if (isCommanding)
         {
-            InputManager.instance.currentMode = ClickMode.Move;
+            inputManager.currentMode = ClickMode.Move;
             Debug.Log("Prompt DeBuild");
             //ClickManager.instance.selectedUnit.GetComponent<Builder>().MoveInput();
             //Build prompt
@@ -49,16 +54,16 @@ public class UnitCommand : MonoBehaviour {
         }
         else
         {
-            InputManager.instance.CancelCommand();
+            inputManager.CancelCommand();
         }
     }
 
     public void Attack ()
     {
-        bool isCommanding = !InputManager.instance.isCommanding;
+        bool isCommanding = !inputManager.isCommanding;
         if (isCommanding)
         {
-            InputManager.instance.currentMode = ClickMode.Move;
+            inputManager.currentMode = ClickMode.Move;
             Debug.Log("Command Attack");
             //ClickManager.instance.selectedUnit.GetComponent<Builder>().MoveInput();
             //Build prompt
@@ -66,7 +71,7 @@ public class UnitCommand : MonoBehaviour {
         }
         else
         {
-            InputManager.instance.CancelCommand();
+            inputManager.CancelCommand();
         }
     }
 }

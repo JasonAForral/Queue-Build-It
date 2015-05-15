@@ -44,7 +44,7 @@ public class Unit : SelectableObject
             if (debugPathLength > 0)
             {
                 currentState = UnitState.Moving;
-                UIManager.instance.UpdateUI(this);
+                GameManager.uiManager.UpdateUI(this);
                 StopCoroutine("BuildOrder");
 
                 StopCoroutine("FollowPath");
@@ -112,7 +112,7 @@ public class Unit : SelectableObject
         lineRenderer.enabled = false;
         if (UnitState.Moving == currentState)
             currentState = UnitState.Idle;
-        UIManager.instance.UpdateUI(this);
+        GameManager.uiManager.UpdateUI(this);
     }
 
     public void OnDrawGizmos ()
@@ -140,7 +140,7 @@ public class Unit : SelectableObject
     {
         //Debug.Log(name + " moves to " + destination);
         StartNewPath(destination);
-        InputManager.instance.CancelCommand();
+        GameManager.inputManager.CancelCommand();
     }
 
     public override string Status

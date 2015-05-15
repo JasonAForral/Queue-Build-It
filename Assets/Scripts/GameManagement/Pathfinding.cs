@@ -6,12 +6,12 @@ using System.Collections.Generic;
 
 public class Pathfinding : MonoBehaviour
 {
-    PathRequestManager requestManager;
+    PathRequestManager pathRequestManager;
     Grid grid;
 
     void Awake ()
     {
-        requestManager = GetComponent<PathRequestManager>();
+        pathRequestManager = GetComponent<PathRequestManager>();
         grid = GetComponent<Grid>();
     }
 
@@ -98,7 +98,7 @@ public class Pathfinding : MonoBehaviour
         {
             waypoints = RetracePath(startNode, startNode);
         }
-        requestManager.FinishedProcessingPath(waypoints, pathSuccess);
+        pathRequestManager.FinishedProcessingPath(waypoints, pathSuccess);
     }
 
     Vector3[] RetracePath (Node beginNode, Node endNode)

@@ -4,8 +4,6 @@ using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager instance;
-
     public GameObject canvas;
 
     public GameObject infoPanel;
@@ -14,19 +12,15 @@ public class UIManager : MonoBehaviour
     public GameObject interfacePanel;
     public GameObject unitButtons;
     public GameObject structureButtons;
+
     
     void Awake ()
     {
-        if (null == instance)
-            instance = this;
-        else if (this != instance)
-        {
-            Destroy(this);
-        }
-
-
+    
         ResetUI();
         canvas.SetActive(true);
+
+        Debug.Log("UI ready");
 
     }
 
@@ -54,7 +48,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateUI (SelectableObject Selected)
     {
-        if (Selected == InputManager.instance.selectedUnit)
+        if (Selected == GameManager.inputManager.selectedUnit)
         {
             nameText.text = Selected.name;
             statusText.text = Selected.Status;

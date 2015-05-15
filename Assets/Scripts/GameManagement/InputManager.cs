@@ -5,8 +5,6 @@ using System.Collections;
 public class InputManager : MonoBehaviour
 {
 
-    public static InputManager instance;
-    
     private SelectableObject _selectedUnit;
 
     public SelectableObject selectedUnit
@@ -14,7 +12,7 @@ public class InputManager : MonoBehaviour
         get { return _selectedUnit;}
         set { _selectedUnit = value;
 
-        UIManager.instance.UpdateUI(_selectedUnit);
+        uiManager.UpdateUI(_selectedUnit);
         }
     }
     
@@ -24,7 +22,7 @@ public class InputManager : MonoBehaviour
     [SerializeField]
     private GameObject selectionCube;
 
-[SerializeField]
+    [SerializeField]
     private LayerMask selectionMask;
     [SerializeField]
     private LayerMask spaceMask;
@@ -37,16 +35,15 @@ public class InputManager : MonoBehaviour
     private Vector3 clickDestination;
 
     private Grid grid;
-
+    private TaskManager taskManager;
+    private UIManager uiManager;
+    
 
     void Awake ()
     {
-        if (null == instance)
-            instance = this;
-        else if (this != instance)
-            Destroy(gameObject);
-
         grid = GetComponent<Grid>();
+        taskManager = GetComponent<TaskManager>();
+        uiManager = GetComponent<UIManager>();
     }
 
     void Update ()
@@ -128,7 +125,7 @@ public class InputManager : MonoBehaviour
                 //selectedUnit.Select();
 
                 //// display Panel UI
-                //UIManager.instance.DisplayUI(selectedUnit);
+                //uiManager.DisplayUI(selectedUnit);
                 UpdateSelection(other);
                 break;
             case ClickMode.Move:
@@ -176,7 +173,7 @@ public class InputManager : MonoBehaviour
         //selectedUnit.Select();
 
         // display Panel UI
-        UIManager.instance.DisplayUI(selectedUnit);
+        uiManager.DisplayUI(selectedUnit);
     }
 
     public void CancelCommand ()
@@ -202,7 +199,7 @@ public class InputManager : MonoBehaviour
         
         // set placeholder
         GameObject placeholder;
-        TaskManager.instance.MakePlaceholder(worldpoint, out placeholder);
+        taskManager.MakePlaceholder(worldpoint, out placeholder);
 
         // start coroutine
         selectedUnit.GetComponent<Builder>().Build(placeholder);
@@ -214,7 +211,7 @@ public class InputManager : MonoBehaviour
         selectionCube.SetActive(false);
         selectionCube.transform.SetParent(null, false);
         selectionCube.transform.parent = null;
-        UIManager.instance.ResetUI();
+        uiManager.ResetUI();
 
     }
 

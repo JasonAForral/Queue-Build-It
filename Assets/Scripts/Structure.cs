@@ -38,8 +38,7 @@ public class Structure : SelectableObject, IBuildable<float>, IDeBuildable<float
     public void Build (float amountBuilt)
     {
         buildProgress += amountBuilt;
-        if (this == InputManager.instance.selectedUnit)
-            UIManager.instance.UpdateUI(this);
+        GameManager.uiManager.UpdateUI(this);
     }
 
     public void DeBuild (float amountDeBuilt)
