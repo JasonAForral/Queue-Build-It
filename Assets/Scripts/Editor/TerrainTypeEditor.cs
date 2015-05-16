@@ -9,6 +9,13 @@ public class TerrainTypeEditor : PropertyDrawer
         int oldIndentLevel = EditorGUI.indentLevel;
         label = EditorGUI.BeginProperty(position, label, property);
         Rect contentPosition = EditorGUI.PrefixLabel(position, label);
+        if (position.height > 16f)
+        {
+            position.height = 16f;
+            EditorGUI.indentLevel += 1;
+            contentPosition = EditorGUI.IndentedRect(position);
+            contentPosition.y += 18f;
+        }
 
         EditorGUIUtility.labelWidth = 46f;
         contentPosition.width *= 0.5f;
@@ -25,5 +32,10 @@ public class TerrainTypeEditor : PropertyDrawer
 
         EditorGUI.EndProperty();
         EditorGUI.indentLevel = oldIndentLevel;
+    }
+
+    public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
+    {
+        return Screen.width < 333 ? (16f + 18f) : 16f;
     }
 }
