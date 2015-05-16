@@ -15,7 +15,7 @@ public class Grid : MonoBehaviour
 
     [SerializeField]
     private TerrainType[] walkableRegions;
-    
+
     private Vector3 gridWordSizeInverse; // fraction
 
     private LayerMask walkableMask;
@@ -23,6 +23,7 @@ public class Grid : MonoBehaviour
 
     private Node[,] grid;
 
+    private float nodeRadiusHalf;
     private float nodeDiameter;
     private float nodeDiameterInverse;
     private Point3 gridSize;
@@ -30,6 +31,16 @@ public class Grid : MonoBehaviour
     private Vector3 mNodeToWorld;
     private Vector3 bIntercept;
     private Vector3 mWorldToNode;
+
+    [SerializeField]
+    private bool _hexGrid;
+    [SerializeField]
+    private float _hexFactor;
+    private float hexFactorInverse;
+
+    public bool hexGrid { get { return _hexGrid; } }
+    public float hexFactor { get { return _hexFactor; } }
+
 
 
     void Awake ()
@@ -51,11 +62,30 @@ public class Grid : MonoBehaviour
 
     void SetCoefficents ()
     {
+        _hexFactor = Mathf.Sin(60 * Mathf.Deg2Rad);
+        hexFactorInverse = 1f / hexFactor;
+
+        nodeRadiusHalf = nodeRadius * 0.5f;
         nodeDiameter = nodeRadius * 2;
         nodeDiameterInverse = 1f / nodeDiameter;
-        
+
         gridSize.x = Mathf.RoundToInt(gridWordSize.x * nodeDiameterInverse);
-        gridSize.z = Mathf.RoundToInt(gridWordSize.z * nodeDiameterInverse);
+        
+        if (hexGrid)
+        {
+            gridSize.z = Mathf.RoundToInt(gridWordSize.z * nodeDiameterInverse * hexFactorInverse);
+            gridWordSize.z = gridSize.z * nodeDiameter * hexFactor;
+        }
+        else
+        {
+            gridSize.z = Mathf.RoundToInt(gridWordSize.z * nodeDiameterInverse);
+            gridWordSize.z = gridSize.z * nodeDiameter;
+        }
+
+
+        gridWordSize.x = gridSize.x * nodeDiameter;
+
+
 
         gridWordSizeInverse = new Vector3(1f / gridWordSize.x, 1f, 1f / gridWordSize.z);
 
@@ -89,8 +119,8 @@ public class Grid : MonoBehaviour
             {
                 //Vector3 worldPoint = worldBottomLeft + new Vector3(x * nodeDiameter - nodeRadius, 0f, z * nodeDiameter - nodeRadius);
                 Vector3 worldPoint = NodeToWorld(x, z);
-                
-                bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius*.95f, unwalkableMask));
+
+                bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius * .95f, unwalkableMask));
                 int movementPentaly = 0;
 
                 if (walkable)
@@ -102,7 +132,6 @@ public class Grid : MonoBehaviour
                         walkableRegionsDictioanry.TryGetValue(hit.collider.gameObject.layer, out movementPentaly);
                     }
                 }
-
                 grid[x, z] = new Node(walkable, worldPoint, new Point3(x, 0, z), movementPentaly);
             }
         }
@@ -119,11 +148,20 @@ public class Grid : MonoBehaviour
             {
 
                 if (0 == x && 0 == z) continue;
+
+                if (hexGrid)
+                {
+                    if (isEvenZ(node.gridPosition.z))
+                    {
+                        if (0 > x && 0 != z) continue;
+                    }
+                    else if (0 < x && 0 != z) continue;
+
+                }
                 Point3 check = node.gridPosition + new Point3(x, 0, z);
 
                 if (check.x >= 0 && check.x < gridSize.x && check.z >= 0 && check.z < gridSize.z)
                 {
-                    //Debug.Log(check.z);
                     neighbors.Add(grid[check.x, check.z]);
                 }
             }
@@ -145,7 +183,7 @@ public class Grid : MonoBehaviour
             foreach (Node n in grid)
             {
                 Gizmos.color = (n.walkable ? Color.grey : Color.red);
-                Gizmos.DrawWireCube(n.worldPosition + Vector3.up * (transform.position.y - .1f), new Vector3(nodeDiameter, 0f, nodeDiameter));
+                Gizmos.DrawSphere(n.worldPosition + Vector3.up * (transform.position.y), nodeRadius);
             }
         }
     }
@@ -157,22 +195,41 @@ public class Grid : MonoBehaviour
         public int penalty;
     }
 
-    public Node WorldToNode (Vector3 world)
+    public Node WorldToNode (Vector3 worldPoint)
     {
         int x, z;
-        x = Mathf.RoundToInt(Mathf.Clamp((world.x + bIntercept.x) * mWorldToNode.x, 0, gridSize.x - 1));
-        z = Mathf.RoundToInt(Mathf.Clamp((world.z + bIntercept.z) * mWorldToNode.z, 0, gridSize.z - 1));
+        x = Mathf.RoundToInt(Mathf.Clamp((worldPoint.x + bIntercept.x) * mWorldToNode.x, 0, gridSize.x - 1));
+        z = Mathf.RoundToInt(Mathf.Clamp((worldPoint.z + bIntercept.z) * mWorldToNode.z, 0, gridSize.z - 1));
         //Debug.Log(x + ", " + z);
         return grid[x, z];
     }
 
-    public Vector3 NodeToWorld (int x, int z)
+    private Vector3 NodeToWorld (int x, int z)
     {
-        Vector3 worldPoint = new Vector3() ;
+        Vector3 worldPoint = new Vector3();
         worldPoint.x = x * mNodeToWorld.x - bIntercept.x;
         worldPoint.y = transform.position.y;
         worldPoint.z = z * mNodeToWorld.z - bIntercept.z;
+
+        if (hexGrid)
+        {
+            worldPoint.x += EvenOddOffset(z);
+        }
+
         return worldPoint;
+    }
+
+    private static bool isEvenZ (int z)
+    {
+        return (z % 2 == 0);
+    }
+
+    private float EvenOddOffset (int z)
+    {
+        if (isEvenZ(z))
+            return nodeRadiusHalf;
+        else
+            return -nodeRadiusHalf;
     }
 
     public Vector3 NodeToWorld (Point3 coord)
@@ -180,4 +237,3 @@ public class Grid : MonoBehaviour
         return NodeToWorld(coord.x, coord.z);
     }
 }
-

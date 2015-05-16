@@ -27,7 +27,7 @@ public class Pathfinding : MonoBehaviour
         // check if nodes are the same;
 
 
-        
+
         //Stopwatch sw = new Stopwatch();
         //sw.Start();
 
@@ -73,7 +73,6 @@ public class Pathfinding : MonoBehaviour
                         neighbor.gCost = newMovementCostToNeighbor;
                         neighbor.hCost = GetDistance(neighbor, targetNode);
                         neighbor.parent = currentNode;
-                        //Debug.Log(currentNode.gridPosition);
 
                         if (!openSet.Contains(neighbor))
                         {
@@ -88,7 +87,7 @@ public class Pathfinding : MonoBehaviour
                 }
             }
         }
-        
+
         yield return null;
         if (pathSuccess)
         {
@@ -120,23 +119,23 @@ public class Pathfinding : MonoBehaviour
     Vector3[] SimplifyPath (List<Node> path)
     {
         List<Vector3> waypoints = new List<Vector3>();
-        Vector3 directionOld = Vector3.zero;
+        //Vector3 directionOld = Vector3.zero;
 
         if (path.Count > 1)
         {
             for (int i = 0; i < path.Count; i++)
             {
-                int j = i + 1;
-                if (i >= path.Count - 1) j = i;
-                Vector3 directionNew = (path[j].gridPosition - path[i].gridPosition).toVector3;
-                if (directionNew != directionOld)
-                {
-                    waypoints.Add(path[i].worldPosition);
-                }
-                directionOld = directionNew;
+                //int j = i + 1;
+                //if (i >= path.Count - 1) j = i;
+                //Vector3 directionNew = (path[j].gridPosition - path[i].gridPosition).toVector3;
+                //if (directionNew != directionOld)
+                //{
+                waypoints.Add(path[i].worldPosition);
+                //}
+                //directionOld = directionNew;
             }
         }
-        else if (path.Count == 1) 
+        else if (path.Count == 1)
         {
             waypoints.Add(path[0].worldPosition);
         }
@@ -145,14 +144,24 @@ public class Pathfinding : MonoBehaviour
 
     int GetDistance (Node nodeA, Node nodeB)
     {
-        Point3 distance = (nodeA.gridPosition - nodeB.gridPosition).abs;
-        if (distance.x > distance.z)
+        if (grid.hexGrid)
         {
-            return 14 * distance.z + 10 * (distance.x - distance.z);
+            Vector3 distance = (nodeB.worldPosition - nodeA.worldPosition);
+            distance = new Vector3(Mathf.Abs(distance.x * 16f), 0f, Mathf.Abs(distance.z));
+            return Mathf.RoundToInt(distance.z + distance.x);
+
+            //return Mathf.FloorToInt(Vector3.Distance(nodeA.worldPosition, nodeB.worldPosition));
         }
+        else
+        {
+            Point3 distance = (nodeA.gridPosition - nodeB.gridPosition).abs;
+            if (distance.x > distance.z)
+            {
+                return 14 * distance.z + 10 * (distance.x - distance.z);
+            }
 
-        return 14 * distance.x + 10 * (distance.z - distance.x);
-
+            return 14 * distance.x + 10 * (distance.z - distance.x);
+        }
     }
 }
    

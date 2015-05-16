@@ -10,10 +10,19 @@ public class DayNightCycle : MonoBehaviour {
 
     private string remainingTime;
     
-    public float timeSpeed = 1f;
+    public float timeScale = 1f;
+
+    public Camera mainCamera;
+
+    public Color dayColor;
+    public Color nightColor;
+
+    private float apexInverse;
     
-	void Start () {
+	void Awake () {
         transform.localEulerAngles = new Vector3(180-counter, 90f, 0f);
+        mainCamera = Camera.main;
+        apexInverse = 1f / 90f;
 	}
 	
 	// Update is called once per frame
@@ -28,20 +37,25 @@ public class DayNightCycle : MonoBehaviour {
 
         if (lightAngle < 180)
         {
+            // daytime
             remainingTime = lightAngle + " in Daytime" + System.Environment.NewLine 
                 + (180 - lightAngle) + " seconds until nightfall";
             timeText.color = Color.black;
+            mainCamera.backgroundColor = Color.Lerp(nightColor, dayColor, 1f-Mathf.Abs(counter - 90f) * apexInverse);
         }
         else
         {
+            // nighttime
             remainingTime = lightAngle + " in Nighttime" + System.Environment.NewLine 
                 + (360 - lightAngle) + " seconds until daybreak";
             timeText.color = Color.white;
+            mainCamera.backgroundColor = nightColor;
         }
 
         timeText.text = System.DateTime.Now.ToString("T") + System.Environment.NewLine
             + remainingTime;
+        
 
-        Time.timeScale = timeSpeed;
+        Time.timeScale = timeScale;
 	}
 }

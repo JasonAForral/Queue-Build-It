@@ -48,35 +48,17 @@ public class InputManager : MonoBehaviour
 
     void Update ()
     {
-
-
         if (Input.GetButtonDown("Fire1"))
-        {
-            ClickPrimary();
-        }
-
+        { ClickPrimary(); }
         if (Input.GetButtonDown("Fire2"))
-        {
-            ClickSecondary();
-        }
-
-
+        { ClickSecondary(); }
         if (Input.GetButtonDown("Cancel"))
         {
             if (isCommanding)
-            {
-                CancelCommand();
-                Debug.Log("Command Cancelled");
-            }
+            { CancelCommand(); }
             else
-            {
-                ClearSelection();
-                Debug.Log("Selection Cleared");
-            }
-
-
+            { ClearSelection(); }
         }
-
     }
 
     void ClickPrimary ()
@@ -108,28 +90,15 @@ public class InputManager : MonoBehaviour
         
         }
 
-        if (Physics.Raycast(ray, out hit, 60f, maskInUse))
+        if (Physics.Raycast(ray, out hit, 1000f, maskInUse))
         {
             Transform other = hit.collider.transform;
             switch (currentMode)
             {
             case ClickMode.Selection:
-                //selectedUnit = other.GetComponent<SelectableObject>();
-                //selectionCube.transform.SetParent(other, false);
-
-                //Vector3 selection = selectionCube.transform.position;
-                //selectionCube.transform.position = new Vector3(selection.x, selectionCube.transform.position.y , selection.z);
-
-                //selectionCube.SetActive(true);
-
-                //selectedUnit.Select();
-
-                //// display Panel UI
-                //uiManager.DisplayUI(selectedUnit);
                 UpdateSelection(other);
                 break;
             case ClickMode.Move:
-
                 MoveUnit(hit.point);
                 break;
             case ClickMode.Build:
@@ -150,13 +119,16 @@ public class InputManager : MonoBehaviour
         {
             CancelCommand();
         }
-        else
+        else if (null != selectedUnit)
         {
-            if (null != selectedUnit && null != selectedUnit.GetComponent<Unit>())
-                if (Physics.Raycast(ray, out hit, 60f, spaceMask))
-                {
-                    MoveUnit(hit.point);
-                }
+            //if (null != selectedUnit.GetComponent<Unit>())
+            //{
+            if (Physics.Raycast(ray, out hit, 1000f, spaceMask))
+            {
+                MoveUnit(hit.point);
+            }
+            //}
+
         }
     }
 
