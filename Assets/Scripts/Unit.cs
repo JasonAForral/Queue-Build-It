@@ -46,7 +46,7 @@ public class Unit : SelectableObject
                 currentState = UnitState.Moving;
                 GameManager.uiManager.UpdateUI(this);
                 StopCoroutine("BuildOrder");
-
+                
                 StopCoroutine("FollowPath");
                 StopCoroutine("DrawPath");
 
