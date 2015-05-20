@@ -9,38 +9,25 @@ public class Builder : Unit
 
     public float progress;
 
-    public override string Status
+    public override string Status ()
     {
-        get
+        switch (currentState)
         {
-            switch (currentState)
-            {
-            case UnitState.Building:
-            case UnitState.DeBuilding:
-                return currentState + ": " + progress.ToString("F3");
-            default:
-                return base.Status;
-            }
+        case TaskState.Building:
+        case TaskState.DeBuilding:
+            return currentState + ": " + progress.ToString("F3");
+        case TaskState.Moving:
+            return currentState + " to assignment";
+        default:
+            return base.Status();
         }
     }
 
-
-    protected override void Start ()
+    private void RequestAssignment ()
     {
-        base.Start();
+
     }
 
-    protected override void Update ()
-    {
-        base.Update();
-
-        // builder has jobWaypoints
-        if (0 < jobWaypoints.Length)
-        {
-
-        }
-
-    }
 
     public void BuildPrompt ()
     {
@@ -67,39 +54,33 @@ public class Builder : Unit
         {
             yield return null;
         }
-
+        
         StopCoroutine("FollowPath");
         StopCoroutine("DrawPath");
-        currentState = UnitState.Building;
+        currentState = TaskState.Building;
         EndPath();
+        yield return null;
         // do build task
         //UIManager.instance.UpdateUI(this);
                     
 
         while (targetStructure.buildProgress < targetStructure.totalBuildCost)
         {
-            progress = targetStructure.totalBuildCost-targetStructure.buildProgress;
-            GameManager.uiManager.UpdateUI(this);
-            if (UnitState.Building != currentState)
+            if (TaskState.Building != currentState)
             {
                 Debug.Log(currentState.ToString());
                 yield break;
             }
+            progress = targetStructure.totalBuildCost - targetStructure.buildProgress;
+            GameManager.uiManager.UpdateUI(this);
             targetStructure.Build(1f * Time.deltaTime);
             yield return null;
         }
 
         GameManager.taskManager.MakeWall(target);
         Debug.Log("Job's Done");
-        currentState = UnitState.Idle;
+        currentState = TaskState.Idle;
         GameManager.uiManager.UpdateUI(this);
-                    
-
     }
 
-    //IEnumerator AssembleStructure (Structure target)
-    //{
-    //    currentState = UnitState.Building;
-    //        target.Build(1f * Time.deltaTime);
-    //}
 }

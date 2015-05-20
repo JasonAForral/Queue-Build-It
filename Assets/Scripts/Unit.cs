@@ -12,20 +12,15 @@ public class Unit : SelectableObject
     public int pathWaypointIndex = 0;
     public bool isPathing;
     public int debugPathLength;
-    public UnitState currentState;
+    public TaskState currentState;
 
     public LineRenderer lineRenderer;
     
     // Use this for initialization
-    protected override void Awake ()
+    protected virtual void Awake ()
     {
         lineRenderer = GetComponent<LineRenderer>();
         selectType = SelectType.Unit;
-    }
-
-    protected override void Update ()
-    {
-
     }
 
     protected void StartNewPath (Vector3 targetPosition)
@@ -43,7 +38,7 @@ public class Unit : SelectableObject
             debugPathLength = path.Length;
             if (debugPathLength > 0)
             {
-                currentState = UnitState.Moving;
+                currentState = TaskState.Moving;
                 GameManager.uiManager.UpdateUI(this);
                 StopCoroutine("BuildOrder");
                 
@@ -59,7 +54,7 @@ public class Unit : SelectableObject
     IEnumerator DrawPath ()
     {
         lineRenderer.enabled = true;
-        while (UnitState.Moving == currentState)
+        while (TaskState.Moving == currentState)
         {
 
             lineRenderer.SetVertexCount(path.Length - pathWaypointIndex + 1);
@@ -110,8 +105,8 @@ public class Unit : SelectableObject
         target = null;
         isPathing = false;
         lineRenderer.enabled = false;
-        if (UnitState.Moving == currentState)
-            currentState = UnitState.Idle;
+        if (TaskState.Moving == currentState)
+            currentState = TaskState.Idle;
         GameManager.uiManager.UpdateUI(this);
     }
 
@@ -143,22 +138,34 @@ public class Unit : SelectableObject
         GameManager.inputManager.CancelCommand();
     }
 
-    public override string Status
+    public override string Status ()
     {
-        get
+        switch (currentState)
         {
+        default:
             return currentState.ToString();
         }
+    }
+
+    public enum TaskState
+    {
+        Idle,
+        Moving,
+        Building,
+        DeBuilding,
+        Attacking,
+        Sleeping
+    }
+
+    public enum AssignmentState
+    {
+        Idle,
+        Moving,
+        Building,
+        DeBuilding,
+        Attacking,
+        Sleeping
     }
     
 }
 
-public enum UnitState
-{
-    Idle,
-    Moving,
-    Building,
-    DeBuilding,
-    Attacking,
-    Sleeping
-}

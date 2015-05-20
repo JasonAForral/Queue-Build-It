@@ -5,28 +5,20 @@ using System.Collections;
 public class Structure : SelectableObject, IBuildable<float>, IDeBuildable<float>
 {
 
-    public override string Status
+    public override string Status ()
     {
-        get
-        {
-            if (buildProgress != 0)
-                return "Progress: " + (totalBuildCost - buildProgress).ToString("F3");
-            else
-                return base.Status;
-        }
+        if (buildProgress != 0)
+            return "Progress: " + (totalBuildCost - buildProgress).ToString("F3");
+        else
+            return base.Status();
+
     }
 
 
     // Use this for initialization
-    protected override void Awake ()
+    protected virtual void Awake ()
     {
         selectType = SelectType.Structure;
-    }
-
-    // Update is called once per frame
-    protected override void Update ()
-    {
-
     }
 
     public float totalBuildCost = 3f;
@@ -43,14 +35,15 @@ public class Structure : SelectableObject, IBuildable<float>, IDeBuildable<float
 
     public void DeBuild (float amountDeBuilt)
     {
-        buildProgress += amountDeBuilt;
+        deBuildProgress += amountDeBuilt;
+        GameManager.uiManager.UpdateUI(this);
     }
 
+    public enum StructureState
+    {
+        Off,
+        Idle,
+        Attacking,
+    }
 }
 
-public enum StructureState
-{
-    Off,
-    Idle,
-    Attacking,
-}

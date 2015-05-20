@@ -51,7 +51,7 @@ public class UIManager : MonoBehaviour
         if (Selected == GameManager.inputManager.selectedUnit)
         {
             nameText.text = Selected.name;
-            statusText.text = Selected.Status;
+            statusText.text = Selected.Status();
         }
     }
 

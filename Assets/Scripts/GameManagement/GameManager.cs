@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     
     public static InputManager inputManager;
     public static TaskManager taskManager;
+    public static AssignmentManager assignmentManager;
     public static UIManager uiManager;
     
     //public static Grid grid;
@@ -25,6 +26,7 @@ public class GameManager : MonoBehaviour
 
         inputManager = GetComponent<InputManager>();
         taskManager = GetComponent<TaskManager>();
+        assignmentManager = GetComponent<AssignmentManager>();
         uiManager = GetComponent<UIManager>();
         
         //grid = GetComponent<Grid>();

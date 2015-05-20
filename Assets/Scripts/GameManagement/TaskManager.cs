@@ -30,6 +30,10 @@ public class TaskManager : MonoBehaviour {
         
 	}
 
+    void Update ()
+    {
+    }
+
     public void MakePlaceholder (Vector3 location, out GameObject instance)
     {
         instance = Instantiate(placeholder, location, Quaternion.identity) as GameObject;
@@ -41,7 +45,6 @@ public class TaskManager : MonoBehaviour {
         GameObject instance = Instantiate(wall, target.transform.position, Quaternion.identity) as GameObject;
         if (target == inputManager.selectedUnit.gameObject)
         {
-            //InputManager.instance.selectedUnit = instance.GetComponent<Structure>();
             inputManager.UpdateSelection(instance.transform);
         }
         instance.transform.parent = objectHolder;
@@ -49,6 +52,12 @@ public class TaskManager : MonoBehaviour {
         grid.ChangeWalkableNode(instance.transform.position);
 
         Destroy(target);
+    }
+
+    public enum TaskType
+    {
+        Move,
+        Build
     }
 
 }
